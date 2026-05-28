@@ -1236,8 +1236,8 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			if (creditMode) {
 				//buffer.clear();
 				buffer.blit(TextureManager.getInstance().getTexture("credits"), 0, 0, buffer.getOutputWidth() / 2 - height / 2, buffer.getOutputHeight() / 2 - height / 2, 512,
-						512, height, height, 60, false, null);
-				buffer.blit(TextureManager.getInstance().getTexture("crazy"), 0, 0, 0, 0, 512, 512, buffer.getOutputWidth(), buffer.getOutputHeight(), 2, true, null);
+						512, height, height, 60, false);
+				buffer.blit(TextureManager.getInstance().getTexture("crazy"), 0, 0, 0, 0, 512, 512, buffer.getOutputWidth(), buffer.getOutputHeight(), 2, true);
 
 				if (KeyStates.fire || mouse.buttonDown(0) || mouse.buttonDown(1) || KeyStates.exit) {
 					KeyStates.exit = false;
@@ -1257,7 +1257,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 		if (KeyStates.tab && hiView != null) {
 			int width = hiView.getWidth();
 			int height = hiView.getHeight();
-			buffer.blit(TextureManager.getInstance().getTexture("highback"), 0, 0, hiView.getX() - 8, hiView.getY() - 8, 128, 128, width + 7, height + 14, 13, false, null);
+			buffer.blit(TextureManager.getInstance().getTexture("highback"), 0, 0, hiView.getX() - 8, hiView.getY() - 8, 128, 128, width + 7, height + 14, 13, false);
 			hiView.draw(buffer);
 		}
 	}
@@ -1279,8 +1279,8 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 				if (!roundWon) {
 					tex = textBannerDead;
 				}
-				buffer.blit(darken, 0, 0, 0, 0, 16, 16, width, buffer.getOutputHeight(), 5, false, null);
-				buffer.blit(tex, 0, 0, 0, start, 512, 256, width, height, 20, false, null);
+				buffer.blit(darken, 0, 0, 0, 0, 16, 16, width, buffer.getOutputHeight(), 5, false);
+				buffer.blit(tex, 0, 0, 0, start, 512, 256, width, height, 20, false);
 			}
 			roundMessage.draw(buffer);
 		}
@@ -1472,7 +1472,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			}
 
 			if (player != null && player.isDead() && spawned && !roundCompleted) {
-				buffer.blit(blood, 0, 0, 0, 0, 512, 512, xw, yw, 17, false, null);
+				buffer.blit(blood, 0, 0, 0, 0, 512, 512, xw, yw, 17, false);
 			}
 
 			// if (shadower!=null) {
