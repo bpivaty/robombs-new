@@ -25,6 +25,13 @@
             <artifactId>lwjgl</artifactId>
             <version>2.9.3</version>
         </dependency>
+        <dependency>
+            <groupId>com.threed</groupId>
+            <artifactId>jpct</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/jpct.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>
