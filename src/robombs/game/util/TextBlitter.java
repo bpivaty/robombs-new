@@ -29,7 +29,19 @@ public class TextBlitter {
     }
     
     public static void blitText(FrameBuffer buffer, String line, int x, int y, int maxX, int maxY) {
-    	blitText(font, buffer, line, x, y, null);
+    	Graphics graphics = buffer.getGraphics();
+    	if (graphics == null) {
+    		return;
+    	}
+
+    	Shape oldClip = graphics.getClip();
+    	try {
+    		graphics.setClip(x, y, Math.max(0, maxX - x), Math.max(0, maxY - y));
+    		blitText(font, graphics, line, x, y, null);
+    	} finally {
+    		graphics.setClip(oldClip);
+    		graphics.dispose();
+    	}
     }
     
     public static int getWidth(GLFont font, String s) {
@@ -41,18 +53,21 @@ public class TextBlitter {
     	if (graphics == null) {
     		return;
     	}
+		blitText(font, graphics, line, x, y, col);
+		graphics.dispose();
+    }
 
-    	Color oldColor = graphics.getColor();
-    	Font oldFont = graphics.getFont();
-    	try {
-    		graphics.setFont(font.font);
-    		graphics.setColor(col != null ? col : Color.WHITE);
-    		int offset=font.fontHeight/3*2;
-    		graphics.drawString(line, x, y+offset);
-    	} finally {
-    		graphics.setColor(oldColor);
-    		graphics.setFont(oldFont);
-    		graphics.dispose();
-    	}
+    private static void blitText(GLFont font, Graphics graphics, String line, int x, int y, Color col) {
+		Color oldColor = graphics.getColor();
+		Font oldFont = graphics.getFont();
+		try {
+			graphics.setFont(font.font);
+			graphics.setColor(col != null ? col : Color.WHITE);
+			int offset = font.fontHeight / 3 * 2;
+			graphics.drawString(line, x, y + offset);
+		} finally {
+			graphics.setColor(oldColor);
+			graphics.setFont(oldFont);
+		}
     }
 }
