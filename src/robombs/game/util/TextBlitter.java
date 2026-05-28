@@ -34,12 +34,18 @@ public class TextBlitter {
     		return;
     	}
 
-    	Shape oldClip = graphics.getClip();
     	try {
-    		graphics.setClip(x, y, Math.max(0, maxX - x), Math.max(0, maxY - y));
+    		int clipWidth = maxX - x;
+    		int clipHeight = maxY - y;
+    		if (clipWidth <= 0 || clipHeight <= 0) {
+    			return;
+    		}
+
+    		Shape oldClip = graphics.getClip();
+    		graphics.setClip(x, y, clipWidth, clipHeight);
     		blitText(font, graphics, line, x, y, null);
-    	} finally {
     		graphics.setClip(oldClip);
+		} finally {
     		graphics.dispose();
     	}
     }
@@ -53,8 +59,11 @@ public class TextBlitter {
     	if (graphics == null) {
     		return;
     	}
-		blitText(font, graphics, line, x, y, col);
-		graphics.dispose();
+		try {
+			blitText(font, graphics, line, x, y, col);
+		} finally {
+			graphics.dispose();
+		}
     }
 
     private static void blitText(GLFont font, Graphics graphics, String line, int x, int y, Color col) {
@@ -63,11 +72,15 @@ public class TextBlitter {
 		try {
 			graphics.setFont(font.font);
 			graphics.setColor(col != null ? col : Color.WHITE);
-			int offset = font.fontHeight / 3 * 2;
+			int offset = baselineOffset(font);
 			graphics.drawString(line, x, y + offset);
 		} finally {
 			graphics.setColor(oldColor);
 			graphics.setFont(oldFont);
 		}
     }
+
+	private static int baselineOffset(GLFont font) {
+		return (font.fontHeight * 2) / 3;
+	}
 }
