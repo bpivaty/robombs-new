@@ -107,14 +107,7 @@ public class SimpleThread extends Thread
  */
     public void restart()
     {
-        new Thread()
-        {
-            @Override
-            public void run()
-            {
-                rerun();
-            }
-        }.start();
+        Thread.ofVirtual().start( this::rerun );
     }
 
 /**

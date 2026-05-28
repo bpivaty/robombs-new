@@ -32,10 +32,8 @@ public class ServerObjectManager {
      * @return LocalObject the corresponding local object
      */
     public LocalObject getLocalObjectToIDs(int objID, int clientID) {
-        for (Iterator<LocalObjectList> itty=client2LocalObj.values().iterator(); itty.hasNext();) {
-            LocalObjectList entry=itty.next();
-            for (Iterator<LocalObject> itty2=entry.iterator(); itty2.hasNext();) {
-                LocalObject lo=itty2.next();
+        for (LocalObjectList entry : client2LocalObj.values()) {
+            for (LocalObject lo : entry) {
                 if (lo.getClientID()==clientID) {
                     if (lo.getObjectID() == objID) {
                         return lo;
@@ -57,10 +55,8 @@ public class ServerObjectManager {
     	if (ci!=null) {
     		copy.remove(ci);
     	}
-        for (Iterator<LocalObjectList> itty=copy.values().iterator(); itty.hasNext();) {
-            LocalObjectList lol=itty.next();
-            for (Iterator<LocalObject> itty2=lol.iterator(); itty2.hasNext();) {
-                LocalObject lo=itty2.next();
+        for (LocalObjectList lol : copy.values()) {
+            for (LocalObject lo : lol) {
                 dc.add(lo);
             }
         }
@@ -77,8 +73,7 @@ public class ServerObjectManager {
         LocalObject lo=new LocalObject(ci.getID(), true);
         ec.fillLocalObject(lo);
         boolean found=false;
-        for (Iterator<LocalObject> itty=lol.iterator(); itty.hasNext();) {
-            LocalObject lot=itty.next();
+        for (LocalObject lot : lol) {
             if (lot.equals(lo)) {
                 lot.copyFrom(lo);
                 found = true;

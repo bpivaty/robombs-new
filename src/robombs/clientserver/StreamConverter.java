@@ -29,7 +29,7 @@ public class StreamConverter {
                     if (cnt > 0) {
                         off = 0;
                         if (!lenOK || pos < 2) {
-                            // Die tatsächliche Länge ermitteln...
+                            // Die tatsÃ¤chliche LÃ¤nge ermitteln...
                             if (cnt > 1 && pos == 0) {
                                 len = ((buffer[0] & 0xff) << 8) + (buffer[1] & 0xff);
                                 lenOK = true;

@@ -327,7 +327,7 @@ public class LocalBombManager extends LocalObjectManager {
 			
 			if (lo.getValue()!=LocalBombManager.VALUE_EXPLODING) {
 				// Do this only if the bomb isn't exploding yet...
-				lo.setLocalTimeStamp(0); // Das l‰sst die Bombe platzen! :-)
+				lo.setLocalTimeStamp(0); // Das l√§sst die Bombe platzen! :-)
 				if (lo.getValue()==LocalBombManager.VALUE_DISABLED) {
 					lo.setValue(LocalBombManager.VALUE_ACTIVE);
 				}

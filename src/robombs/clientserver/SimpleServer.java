@@ -50,9 +50,9 @@ public class SimpleServer {
             name = serverName;
         }
         this.tcpPort=tcpPort;
-        new Thread(new ClientRegisterService(tcpPort)).start();
+        Thread.ofVirtual().start(new ClientRegisterService(tcpPort));
         if (doBroadcast) {
-        	serverBroadcast=new Thread(new ServerBroadcast(tcpPort, udpPort));
+        	serverBroadcast=Thread.ofVirtual().unstarted(new ServerBroadcast(tcpPort, udpPort));
         	serverBroadcast.start();
         }
     }
@@ -240,8 +240,7 @@ public class SimpleServer {
 
                                     ok = true;
 
-                                    for (Iterator<ClientLoginListener> itty = loginListener.iterator(); itty.hasNext(); ) {
-                                        ClientLoginListener cll = itty.next();
+                                    for (ClientLoginListener cll : loginListener) {
                                         DataContainer resp = cll.loggedIn(ci, add);
                                         if (resp != null) {
                                             broadcast(resp);
@@ -252,7 +251,7 @@ public class SimpleServer {
                                     }
 
                                     if (ok) {
-                                        new Thread(cp).start();
+                                        Thread.ofVirtual().start(cp);
                                     }
                                 } else {
                                     // @todo: May this happen?
@@ -393,7 +392,6 @@ public class SimpleServer {
         }
         
         public void run() {
-        	Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
             try {
             	DataContainer[] crs = new DataContainer[1];
             	while (!exit && !terminate) {
@@ -550,8 +548,7 @@ public class SimpleServer {
      */
     private void logout(ClientInfo ci) {
         if (clientThreads.containsKey(ci) && !ci.isLoggedOut()) {
-            for (Iterator<ClientLogoutListener> itty2 = logoutListener.iterator(); itty2.hasNext(); ) {
-                ClientLogoutListener ctl = itty2.next();
+            for (ClientLogoutListener ctl : logoutListener) {
                 DataContainer dc = ctl.loggedOut(ci);
                 broadcast(dc);
                 NetLogger.log("Server: Client " + ci.getAddress() + " logged out!");

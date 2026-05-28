@@ -135,8 +135,7 @@ public class HighscoreTable {
 	 */
 	public DataContainer getContainer() {
 		InfoDataContainer idc = new InfoDataContainer();
-		for (Iterator<InfoLine> itty = table.iterator(); itty.hasNext();) {
-			InfoLine il = itty.next();
+		for (InfoLine il : table) {
 			idc.add(il);
 		}
 		return idc;
@@ -150,8 +149,7 @@ public class HighscoreTable {
 	 *            the container
 	 */
 	public void addToContainer(InfoDataContainer dc) {
-		for (Iterator<InfoLine> itty = table.iterator(); itty.hasNext();) {
-			InfoLine il = itty.next();
+		for (InfoLine il : table) {
 			dc.add(il);
 		}
 	}

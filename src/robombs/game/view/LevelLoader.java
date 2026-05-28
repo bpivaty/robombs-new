@@ -190,8 +190,8 @@ public class LevelLoader {
 		int cnt = 0;
 		int max = -1;
 
-		StringBuffer buf = new StringBuffer(40);
-		StringBuffer buf2 = new StringBuffer(40);
+		StringBuilder buf = new StringBuilder(40);
+		StringBuilder buf2 = new StringBuilder(40);
 		while (toky.hasMoreTokens()) {
 			String tok = toky.nextToken();
 			buf.setLength(0);
@@ -234,7 +234,7 @@ public class LevelLoader {
 			cnt++;
 		}
 
-		StringBuffer sb = new StringBuffer(max);
+		StringBuilder sb = new StringBuilder(max);
 		for (int i = 0; i < max; i++) {
 			sb.append(OUTSIDE);
 		}
@@ -314,7 +314,7 @@ public class LevelLoader {
 						int texID = texMan.getTextureID(set+topy);
 
 						// "Dach" malen...da reicht einfache
-						// Geometrie-Auflösung, da es
+						// Geometrie-Auflï¿½sung, da es
 						// nicht beleuchtet wird
 						addHorizontalPolygon(top, x, x + MapMask.TILE_SIZE,
 								-height, z, z - MapMask.TILE_SIZE, 1, texID);
@@ -466,7 +466,7 @@ public class LevelLoader {
 	}
 
 	private static String flip(String line) {
-		StringBuffer sb=new StringBuffer();
+		StringBuilder sb=new StringBuilder();
 		for (int i=line.length()-1; i>=0; i--) {
 			sb.append(line.charAt(i));
 		}

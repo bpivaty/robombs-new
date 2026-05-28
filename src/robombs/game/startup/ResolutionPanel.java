@@ -130,7 +130,7 @@ public class ResolutionPanel extends JPanel {
 			String rl = renderer.toLowerCase();
 			hw = vl + "/" + rl;
 
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < rl.length(); i++) {
 				if (Character.isDigit(rl.charAt(i))) {
 					sb.append(rl.charAt(i));
@@ -268,7 +268,7 @@ public class ResolutionPanel extends JPanel {
 			}
 
 			if (isAGP) {
-				// Bei AGP etwa zurückdrehen.
+				// Bei AGP etwa zurÃ¼ckdrehen.
 				guessedAAValue = 0;
 				if (guessedShadowValue >= 3) {
 					guessedShadowValue--;
