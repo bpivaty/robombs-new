@@ -1,7 +1,7 @@
 package robombs.game.startup;
 
 import com.threed.jpct.*;
-import com.threed.jpct.util.GLSLShader;
+import com.threed.jpct.GLSLShader;
 
 import javax.swing.*;
 

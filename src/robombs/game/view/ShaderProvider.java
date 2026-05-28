@@ -8,7 +8,7 @@ import robombs.game.util.SimpleStream;
 import com.threed.jpct.Loader;
 import com.threed.jpct.Logger;
 import com.threed.jpct.Object3D;
-import com.threed.jpct.util.GLSLShader;
+import com.threed.jpct.GLSLShader;
 
 /**
  * 
