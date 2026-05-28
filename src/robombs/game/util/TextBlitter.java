@@ -25,13 +25,11 @@ public class TextBlitter {
     }
     
     public static void blitText(FrameBuffer buffer, String line, int x, int y) {
-    	int offset=font.fontHeight/3*2;
-        font.blitString(buffer, line, x, y+offset, 12, null);
+    	blitText(font, buffer, line, x, y, null);
     }
     
     public static void blitText(FrameBuffer buffer, String line, int x, int y, int maxX, int maxY) {
-    	int offset=font.fontHeight/3*2;
-    	font.blitString(buffer, line, x, y+offset, 12, null);
+    	blitText(font, buffer, line, x, y, null);
     }
     
     public static int getWidth(GLFont font, String s) {
@@ -39,7 +37,22 @@ public class TextBlitter {
     }
     
     public static void blitText(GLFont font, FrameBuffer buffer, String line, int x, int y, Color col) {
-    	int offset=font.fontHeight/3*2;
-        font.blitString(buffer, line, x, y+offset, 12, col);
+    	Graphics graphics = buffer.getGraphics();
+    	if (graphics == null) {
+    		return;
+    	}
+
+    	Color oldColor = graphics.getColor();
+    	Font oldFont = graphics.getFont();
+    	try {
+    		graphics.setFont(font.font);
+    		graphics.setColor(col != null ? col : Color.WHITE);
+    		int offset=font.fontHeight/3*2;
+    		graphics.drawString(line, x, y+offset);
+    	} finally {
+    		graphics.setColor(oldColor);
+    		graphics.setFont(oldFont);
+    		graphics.dispose();
+    	}
     }
 }
