@@ -108,7 +108,7 @@ public class LocalObject {
     }
     
     /**
-     * Wird nicht übertragen!
+     * Wird nicht Ã¼bertragen!
      * @param time
      */
     public void setLocalTimeStamp(long time) {
@@ -116,7 +116,7 @@ public class LocalObject {
     }
     
     /**
-     * Wird nicht übertragen!
+     * Wird nicht Ã¼bertragen!
      * @param time
      */
     public long getLocalTimeStamp() {

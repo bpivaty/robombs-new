@@ -125,13 +125,14 @@ public class TalkBack {
 			               }
 			            } while (len!=-1);
 			        }
-			        String res=html.toString();
-			        if (res.startsWith("ok/")) {
-			            NetLogger.log("Talkback data transfered!");
-			        } else {
-			        	NetLogger.log("Talkback data not transfered!");
-			        	System.err.println(res);
-			        }
+				        String res=html.toString();
+				        if (res.startsWith("ok/")) {
+				            NetLogger.log("Talkback data transfered!");
+				        } else {
+				        	NetLogger.log("Talkback data not transfered!");
+				        	System.err.println(res);
+				        }
+				}
 			} catch (Exception e) {
 				NetLogger.log("Talkback data not transfered!");
 				e.printStackTrace();

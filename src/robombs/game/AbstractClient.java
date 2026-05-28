@@ -166,9 +166,9 @@ public abstract class AbstractClient {
 	public void beforeReceiving() {
 		received = false;
 		if (coMan != null) {
-			// Erstmal alle als nicht übertragen markieren. Sollten sie es
+			// Erstmal alle als nicht Ã¼bertragen markieren. Sollten sie es
 			// dennoch werden, wird
-			// unten umgesetzt. Ansonsten fliegen sie beim nächsten Zeichnen!
+			// unten umgesetzt. Ansonsten fliegen sie beim nÃ¤chsten Zeichnen!
 			synchronized (SYNC) {
 				for (ClientObject co : coMan.getClientObjects()) {
 					co.setTransfered(false);

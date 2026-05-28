@@ -268,7 +268,7 @@ public class ResolutionPanel extends JPanel {
 			}
 
 			if (isAGP) {
-				// Bei AGP etwa zurückdrehen.
+				// Bei AGP etwa zurÃ¼ckdrehen.
 				guessedAAValue = 0;
 				if (guessedShadowValue >= 3) {
 					guessedShadowValue--;

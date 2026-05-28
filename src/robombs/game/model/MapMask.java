@@ -59,7 +59,7 @@ public class MapMask {
 		return new GridPosition(px, pz);
 	}
 	
-	// Ecke bzw. über die Kante?
+	// Ecke bzw. Ã¼ber die Kante?
 	public int doCornerCheck(GridPosition cur, int xOff, int zOff) {
 		if (xOff != 0 && zOff != 0) {
 			int x = cur.getX();
@@ -83,7 +83,7 @@ public class MapMask {
 		return tile == MapMask.UNKNOWN;
 	}
 
-	// Temporäres Hindernis?
+	// TemporÃ¤res Hindernis?
 	public boolean isBlocked(int x, int y) {
 		int tile = getMaskAt(x, y);
 		return tile==MapMask.CRATE || isItem(tile);
