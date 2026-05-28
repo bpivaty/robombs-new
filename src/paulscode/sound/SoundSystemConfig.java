@@ -809,28 +809,24 @@ public class SoundSystemConfig
         final String srcName = sourcename;
         final int qSize = queueSize;
 
-        new Thread()
+        Thread.ofVirtual().start( () ->
         {
-            @Override
-            public void run()
+            synchronized( streamListenersLock )
             {
-                synchronized( streamListenersLock )
+                if( streamListeners == null )
+                    return;
+                ListIterator<IStreamListener> i = streamListeners.listIterator();
+                IStreamListener streamListener;
+                while( i.hasNext() )
                 {
-                    if( streamListeners == null )
-                        return;
-                    ListIterator<IStreamListener> i = streamListeners.listIterator();
-                    IStreamListener streamListener;
-                    while( i.hasNext() )
-                    {
-                        streamListener = i.next();
-                        if( streamListener == null )
-                            i.remove();
-                        else
-                            streamListener.endOfStream( srcName, qSize );
-                    }
+                    streamListener = i.next();
+                    if( streamListener == null )
+                        i.remove();
+                    else
+                        streamListener.endOfStream( srcName, qSize );
                 }
             }
-        }.start();
+        } );
     }
 
 //  END STATIC SYNCHRONIZED INTERFACE METHODS

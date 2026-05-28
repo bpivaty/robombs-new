@@ -111,9 +111,8 @@ public class TextureUtils {
 
 		long s = Ticker.getTime();
 		// Load in two threads to utilize multicore-cpus for a faster startup.
-		Thread loader = new Thread() {
-			public void run() {
-				try {
+		Thread loader = Thread.ofVirtual().unstarted(() -> {
+			try {
 					initOpaqueTexture("warehouse_top", "data/sets/warehouse/top.jpg");
 					initOpaqueTexture("warehouse_border", "data/sets/warehouse/border.jpg");
 					initTexture("warehouse_wall", "data/sets/warehouse/wall.jpg", true);
@@ -160,11 +159,10 @@ public class TextureUtils {
 					initTexture("space_floor4", "data/sets/space/floor4.jpg", true);
 					
 					initTexture("highback", "data/highback.png", false);
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
 			}
-		};
+		});
 		loader.start();
 
 		initOpaqueTexture("classic_top", "data/sets/classic/top.jpg");

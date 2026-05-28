@@ -80,7 +80,7 @@ public class CachedUrlStream implements PhysicalOggStream {
       this.sourceStream=this.source.getInputStream();
 
       loaderThread=new LoaderThread(sourceStream, drain, memoryCache);
-      new Thread(loaderThread).start();
+      Thread.ofVirtual().start(loaderThread);
 
       while(!loaderThread.isBosDone() || pageOffsets.size()<20) {
          //System.out.print("pageOffsets.size(): "+pageOffsets.size()+"\r");

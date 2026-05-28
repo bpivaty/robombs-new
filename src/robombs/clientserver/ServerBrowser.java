@@ -35,7 +35,7 @@ public class ServerBrowser {
      * Starts the browser.
      */
     public void startBrowser() {
-        new Thread(new BrowserThread()).start();
+        Thread.ofVirtual().start(new BrowserThread());
     }
 
     /**
@@ -59,8 +59,7 @@ public class ServerBrowser {
      * Notify the listeners...
      */
     private void fireEvent() {
-        for (Iterator<DataChangeListener> itty = dataChangeListener.iterator(); itty.hasNext(); ) {
-            DataChangeListener dcl = itty.next();
+        for (DataChangeListener dcl : dataChangeListener) {
             dcl.dataChanged(getServerList());
         }
     }

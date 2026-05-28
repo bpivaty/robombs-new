@@ -58,7 +58,7 @@ public class SimpleClient {
      */
     public void connect() throws Exception {
         sender = new Sender();
-        senderThread=new Thread(sender);
+        senderThread=Thread.ofVirtual().unstarted(sender);
         senderThread.start();
     }
 
@@ -242,7 +242,6 @@ public class SimpleClient {
         }
 
         public void run() {
-        	Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
             try {
             	while (!exit) {
             		long start=System.nanoTime();

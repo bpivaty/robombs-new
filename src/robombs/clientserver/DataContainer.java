@@ -1,6 +1,7 @@
 package robombs.clientserver;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.*;
 
@@ -286,7 +287,7 @@ public class DataContainer implements Cloneable {
                     int low = (byte) (ii - (hi << 8));
                     bos.write(new byte[] {(byte) hi, (byte) low}); // Length
                     if (content==null) {
-                    	content=((String) objs.get(i)).getBytes("UTF-8");
+                    	content=((String) objs.get(i)).getBytes(StandardCharsets.UTF_8);
                     	cache.put(txt, content);
                     	misses++;
                     } else {
@@ -407,7 +408,7 @@ public class DataContainer implements Cloneable {
                         case (TYPE_STRING): {
                             types.add(I_TYPE_STRING);
                             int leny = (bytes[i + 1] << 8) + bytes[i + 2];
-                            objs.add(new String(bytes, i + 3, leny, "UTF-8"));
+                            objs.add(new String(bytes, i + 3, leny, StandardCharsets.UTF_8));
                             i += 3 + leny;
                             break;
                         }

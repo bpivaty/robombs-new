@@ -19,17 +19,14 @@ public class ResolutionFrame {
 		final ResolutionPanel rp=new ResolutionPanel(jf);
 		ActionListener al=new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				new Thread() {
-					public void run() {
-						try {
-							rp.save();
-							sl.selected(rp.getMode(), rp.isFullscreen(), rp.getShadowQuality(), rp.getShadowFiltering(), rp.getAntiAliasingMode(), rp.getMouseSpeed());
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+				Thread.ofVirtual().start(() -> {
+					try {
+						rp.save();
+						sl.selected(rp.getMode(), rp.isFullscreen(), rp.getShadowQuality(), rp.getShadowFiltering(), rp.getAntiAliasingMode(), rp.getMouseSpeed());
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-				}.start();
+				});
 				jf.setVisible(false);
 				jf.dispose();
 			}

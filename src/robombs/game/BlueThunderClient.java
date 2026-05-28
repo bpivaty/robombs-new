@@ -314,7 +314,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	public void startServer(int port) throws Exception {
 		if (serverImpl == null) {
 			serverImpl = new BlueThunderServer(port);
-			new Thread(serverImpl).start();
+			Thread.ofVirtual().start(serverImpl);
 		}
 	}
 
@@ -1127,9 +1127,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			// before respawning.
 			entitiesUpdated = false;
 			respawnRunning = true;
-			new Thread() {
-				public void run() {
-					setPriority(Thread.MAX_PRIORITY);
+			Thread.ofVirtual().start(() -> {
 					spawned = false;
 					SimpleVector respawn = null;
 					int its = 0;
@@ -1205,9 +1203,8 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 					bombTicker.reset();
 					hasToRelease = true;
 					respawnRunning = false;
-				}
-			}.start();
-		}
+				});
+			}
 	}
 
 	/**

@@ -156,7 +156,7 @@ public class MapMask {
 	public String toString() {
 		String r = "";
 		for (int y = 0; y < height; y++) {
-			StringBuffer sb = new StringBuffer(width);
+			StringBuilder sb = new StringBuilder(width);
 			for (int x = 0; x < width; x++) {
 				int pos = x + y * width;
 				int m = mask[pos];

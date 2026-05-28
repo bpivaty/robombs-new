@@ -24,7 +24,7 @@
 package de.jarnbjo.vorbis;
 
 import java.io.*;
-
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import de.jarnbjo.util.io.BitInputStream;
@@ -231,7 +231,7 @@ public class CommentHeader {
          strArray[i]=(byte)source.getInt(8);
       }
 
-      return new String(strArray, "UTF-8");
+      return new String(strArray, StandardCharsets.UTF_8);
    }
 
 }

@@ -194,24 +194,22 @@ public class BotClient extends AbstractClient implements DataTransferListener,	C
 	 * @throws Exception
 	 */
 	public void run() throws Exception {
-		new Thread() {
-			public void run() {
+		Thread.ofVirtual().start(() -> {
+			try {
+				mapList = new MapList();
+				initBuffer();
+				ServerEntry serv=new ServerEntry(null, InetAddress.getLocalHost(),serverImpl.getPort(), 0);
 				try {
-					mapList = new MapList();
-					initBuffer();
-					ServerEntry serv=new ServerEntry(null, InetAddress.getLocalHost(),serverImpl.getPort(), 0);
-					try {
-						connect(serv);
-						addBot();
-						gameLoop();
-					} finally {
-						NetLogger.log("BotClient: Client thread terminated!");
-					}
-				} catch(Exception e) {
-					throw new RuntimeException(e);
+					connect(serv);
+					addBot();
+					gameLoop();
+				} finally {
+					NetLogger.log("BotClient: Client thread terminated!");
 				}
+			} catch(Exception e) {
+				throw new RuntimeException(e);
 			}
-		}.start();
+		});
 	}
 
 
@@ -567,12 +565,10 @@ public class BotClient extends AbstractClient implements DataTransferListener,	C
 			// before respawning.
 			entitiesUpdated = false;
 			respawnRunning=true;
-			new Thread() {
-				public void run() {
-					setPriority(Thread.MAX_PRIORITY);
-					SimpleVector respawn = null;
-					int cnt = 0;
-					try {
+			Thread.ofVirtual().start(() -> {
+				SimpleVector respawn = null;
+				int cnt = 0;
+				try {
 						boolean ok=false;
 						do {
 							// This should ensure that the bot client knows the positions of the other player...this
@@ -662,9 +658,8 @@ public class BotClient extends AbstractClient implements DataTransferListener,	C
 
 					fireTicker.reset();
 					respawnRunning=false;
-				}
-			}.start();
-		}
+			});
+			}
 	}
 
 
@@ -700,8 +695,6 @@ public class BotClient extends AbstractClient implements DataTransferListener,	C
 		long aiTime=0;
 
 		int sleepy=(int)((1000f/((float)Globals.frameLimit/*0.075f*/))+0.5f);
-
-		Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
 
 		while (!quit) {
 

@@ -172,11 +172,9 @@ public class ServerEventManager {
 			final boolean onlyOneTeamLeftf = onlyOneTeamLeft;
 			final String valuef = value;
 			final int teamf = team;
-			new Thread() {
-				// Start a new thread that sends a new event after some time has
-				// passed.
-				public void run() {
-					try {
+			Thread.ofVirtual().start(() -> {
+				// Start a new thread that sends a new event after some time has passed.
+				try {
 						Thread.sleep(300); // Sleep some time to detect a draw!
 
 						PlayerInfo win = winner;
@@ -226,9 +224,8 @@ public class ServerEventManager {
 					}
 					threadRunning = false;
 					drawDetectionDone = false;
-				}
-			}.start();
-		} else {
+			});
+			} else {
 			if (aliveCnt == botCnt && !threadRunning && botCnt != 0) {
 				// Only bots have survived? Accerate the game...:-)
 				EventDataContainer edc = new EventDataContainer();
