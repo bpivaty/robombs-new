@@ -2,3 +2,5 @@ This is one of my favorite game, I am tring to port it to migrate from old java 
 I need to contact the author.
 # robombs-new
 The java bomberman called Robombs rematerized 
+
+Current rendering/audio native layer target: LWJGL 2.8.4.
