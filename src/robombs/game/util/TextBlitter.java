@@ -25,13 +25,29 @@ public class TextBlitter {
     }
     
     public static void blitText(FrameBuffer buffer, String line, int x, int y) {
-    	int offset=font.fontHeight/3*2;
-        font.blitString(buffer, line, x, y+offset, 12, null);
+    	blitText(font, buffer, line, x, y, null);
     }
     
     public static void blitText(FrameBuffer buffer, String line, int x, int y, int maxX, int maxY) {
-    	int offset=font.fontHeight/3*2;
-    	font.blitString(buffer, line, x, y+offset, 12, null);
+    	Graphics graphics = buffer.getGraphics();
+    	if (graphics == null) {
+    		return;
+    	}
+
+    	try {
+    		int clipWidth = maxX - x;
+    		int clipHeight = maxY - y;
+    		if (clipWidth <= 0 || clipHeight <= 0) {
+    			return;
+    		}
+
+    		Shape oldClip = graphics.getClip();
+    		graphics.setClip(x, y, clipWidth, clipHeight);
+    		blitText(font, graphics, line, x, y, null);
+    		graphics.setClip(oldClip);
+		} finally {
+    		graphics.dispose();
+    	}
     }
     
     public static int getWidth(GLFont font, String s) {
@@ -39,7 +55,32 @@ public class TextBlitter {
     }
     
     public static void blitText(GLFont font, FrameBuffer buffer, String line, int x, int y, Color col) {
-    	int offset=font.fontHeight/3*2;
-        font.blitString(buffer, line, x, y+offset, 12, col);
+    	Graphics graphics = buffer.getGraphics();
+    	if (graphics == null) {
+    		return;
+    	}
+		try {
+			blitText(font, graphics, line, x, y, col);
+		} finally {
+			graphics.dispose();
+		}
     }
+
+    private static void blitText(GLFont font, Graphics graphics, String line, int x, int y, Color col) {
+		Color oldColor = graphics.getColor();
+		Font oldFont = graphics.getFont();
+		try {
+			graphics.setFont(font.font);
+			graphics.setColor(col != null ? col : Color.WHITE);
+			int offset = baselineOffset(font);
+			graphics.drawString(line, x, y + offset);
+		} finally {
+			graphics.setColor(oldColor);
+			graphics.setFont(oldFont);
+		}
+    }
+
+	private static int baselineOffset(GLFont font) {
+		return (font.fontHeight * 2) / 3;
+	}
 }
