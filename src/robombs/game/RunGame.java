@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 import robombs.game.startup.ResolutionFrame;
 
@@ -39,7 +41,7 @@ public class RunGame {
         }
 
         Path nativeDir = Files.createTempDirectory("robombs-lwjgl-natives");
-        nativeDir.toFile().deleteOnExit();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> deleteDirectoryQuietly(nativeDir)));
 
         int extracted = 0;
         for (String nativeLib : WINDOWS_NATIVE_LIBS) {
@@ -49,18 +51,29 @@ public class RunGame {
                 }
                 Path target = nativeDir.resolve(nativeLib);
                 Files.copy(input, target, StandardCopyOption.REPLACE_EXISTING);
-                target.toFile().deleteOnExit();
                 extracted++;
             }
         }
 
         if (extracted == 0) {
-            throw new IOException("No Windows LWJGL native libraries were found in the packaged JAR.");
+            throw new IOException("No Windows LWJGL native libraries were found in the packaged JAR. Use robombs-new-<version>-windows.jar.");
         }
 
         String nativePath = nativeDir.toAbsolutePath().toString();
         System.setProperty("org.lwjgl.librarypath", nativePath);
         System.setProperty("net.java.games.input.librarypath", nativePath);
         System.setProperty("java.library.path", nativePath);
+    }
+
+    private static void deleteDirectoryQuietly(Path path) {
+        try (Stream<Path> stream = Files.walk(path)) {
+            stream.sorted(Comparator.reverseOrder()).forEach(file -> {
+                try {
+                    Files.deleteIfExists(file);
+                } catch (IOException ignored) {
+                }
+            });
+        } catch (IOException ignored) {
+        }
     }
 }
