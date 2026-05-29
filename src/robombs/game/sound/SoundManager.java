@@ -76,6 +76,12 @@ public class SoundManager {
 	}
 	
 	public void addSound(String name, String fileName) {
+		if (fileName==null || fileName.isEmpty()) {
+			if (warnedMissingSounds.add(String.valueOf(fileName))) {
+				Logger.log("Sound '"+name+"' has no valid file configured and will be skipped!", Logger.WARNING);
+			}
+			return;
+		}
 		String resolved=resolveSoundFile(fileName);
 		if (resolved!=null) {
 			sounds.put(name, resolved);
@@ -140,7 +146,13 @@ public class SoundManager {
 		}
 		String soundPath=SoundSystemConfig.getSoundFilesPackage()+fileName;
 		URL resource=SoundManager.class.getClassLoader().getResource(soundPath);
-		return resource!=null || new File(soundPath).isFile() || new File(fileName).isFile();
+		if (resource!=null) {
+			return true;
+		}
+		if (new File(soundPath).isFile()) {
+			return true;
+		}
+		return new File(fileName).isFile();
 	}
 	
 	public void move(String sound, SimpleVector pos) {
