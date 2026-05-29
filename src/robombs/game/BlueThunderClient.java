@@ -2,7 +2,9 @@ package robombs.game;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.net.InetAddress;
 import java.util.*;
@@ -141,10 +143,16 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 
 	private void adaptResolutionToScreen() {
 		try {
-			Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-			if (screen != null && screen.width > 0 && screen.height > 0) {
-				width = screen.width;
-				height = screen.height;
+			Rectangle usableScreenBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+			if (usableScreenBounds.width > 0 && usableScreenBounds.height > 0) {
+				width = usableScreenBounds.width;
+				height = usableScreenBounds.height;
+			} else {
+				Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+				if (screen.width > 0 && screen.height > 0) {
+					width = screen.width;
+					height = screen.height;
+				}
 			}
 		} catch (HeadlessException e) {
 			// Keep fallback size.
