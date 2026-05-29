@@ -2,6 +2,7 @@ package robombs.game.gui;
 
 import com.threed.jpct.util.*;
 import java.awt.event.*;
+import java.awt.*;
 
 import robombs.game.util.*;
 
@@ -17,6 +18,7 @@ public class TextField extends GUIComponent {
     private int xs = 0;
     private int ys = 0;
     private boolean active = false;
+    private GLFont font = null;
 
     /**
      * Creates a new text field.
@@ -55,11 +57,15 @@ public class TextField extends GUIComponent {
 
             int xpos = getParentX();
             int ypos = getParentY();
+            int scaledX = scaleValue(xp);
+            int scaledY = scaleValue(yp);
+            int scaledWidth = scaleValue(xs);
+            int scaledHeight = scaleValue(ys);
 
             int x = mouse.getMouseX() - xpos;
             int y = mouse.getMouseY() - ypos;
             if (mouse.buttonDown(0) || active) {
-                if (x >= xp && x <= xp + xs && y >= yp && y <= yp + ys) {
+                if (x >= scaledX && x <= scaledX + scaledWidth && y >= scaledY && y <= scaledY + scaledHeight) {
                     input = true;
                     active = true;
                 } else {
@@ -102,7 +108,10 @@ public class TextField extends GUIComponent {
             if (active) {
                 txt += "|";
             }
-            TextBlitter.blitText(buffer, txt, getParentX() + xp, getParentY() + yp);
+            if (font == null || font.font.getSize() != Math.max(15, scaleValue(15))) {
+                font = GLFont.getGLFont(new Font("Arial", Font.BOLD, Math.max(15, scaleValue(15))));
+            }
+            TextBlitter.blitText(font, buffer, txt, getParentX() + scaleValue(xp), getParentY() + scaleValue(yp), null);
             super.draw(buffer);
         }
     }

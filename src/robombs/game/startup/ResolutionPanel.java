@@ -26,7 +26,7 @@ public class ResolutionPanel extends JPanel {
 	private JButton click = null;
 	private Map<String, List<VideoMode>> resolutions = null;
 	private VideoMode vm = null;
-	private boolean optionsVisible = false;
+	private boolean optionsVisible = true;
 	private JPanel subPanel = null;
 	private JSlider shadows = null;
 	private JSlider mouse = null;
@@ -323,6 +323,7 @@ public class ResolutionPanel extends JPanel {
 		fullscreen.setPreferredSize(new Dimension(100, 20));
 		fullscreen.setBackground(Color.WHITE);
 		fullscreen.setText("Fullscreen");
+		fullscreen.setSelected(true);
 		fullscreen.setToolTipText("Enable fullscreen mode");
 
 		final JFrame pf = parentFrame;
@@ -345,7 +346,7 @@ public class ResolutionPanel extends JPanel {
 		subPanel.setLayout(fl);
 
 		final JButton options = new JButton();
-		options.setText("Show Options");
+		options.setText("Hide Options");
 		options.setPreferredSize(new Dimension(120, 20));
 		options.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {

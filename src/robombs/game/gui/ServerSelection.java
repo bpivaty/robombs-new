@@ -90,7 +90,7 @@ public class ServerSelection implements DataChangeListener, GUIListener {
 	 *            the client as an instance of GameClient
 	 * @throws Exception
 	 */
-	public ServerSelection(ServerBrowser sb, GameClient client, int height) throws Exception {
+	public ServerSelection(ServerBrowser sb, GameClient client, int width, int height) throws Exception {
 		sb.addListener(this);
 		SimpleStream ss = new SimpleStream("data/window.gif");
 		backDrop = new Texture(ss.getStream());
@@ -114,11 +114,13 @@ public class ServerSelection implements DataChangeListener, GUIListener {
 
 		mapList = client.getMapList();
 
-		if (backDrop.getHeight() + 50 <= height) {
-			window = new Window(backDrop, 50, 50);
-		} else {
-			window = new Window(backDrop, 50, 0);
-		}
+		float guiScale = Math.max(1f, Math.min((width - 100f) / backDrop.getWidth(), (height - 80f) / backDrop.getHeight()));
+		int windowWidth = Math.round(backDrop.getWidth() * guiScale);
+		int windowHeight = Math.round(backDrop.getHeight() * guiScale);
+		int windowX = Math.max(0, (width - windowWidth) / 2);
+		int windowY = Math.max(0, (height - windowHeight) / 2);
+		window = new Window(backDrop, windowX, windowY);
+		window.setScale(guiScale);
 		window.setText("Version: " + Globals.GAME_VERSION);
 
 		field = new TextField(204, 388, 272, 16);

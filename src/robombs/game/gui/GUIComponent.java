@@ -17,6 +17,7 @@ public abstract class GUIComponent {
 
 	protected int xpos = 0;
 	protected int ypos = 0;
+	private float scale = 1f;
 	private GUIComponent superC = null;
 	private List<GUIComponent> comps = new ArrayList<GUIComponent>();
 	protected boolean visible = true;
@@ -77,6 +78,21 @@ public abstract class GUIComponent {
 	 */
 	public int getY() {
 		return ypos;
+	}
+
+	public void setScale(float scale) {
+		this.scale = scale;
+	}
+
+	protected float getScale() {
+		if (superC != null) {
+			return superC.getScale();
+		}
+		return scale;
+	}
+
+	protected int scaleValue(int value) {
+		return Math.round(value * getScale());
 	}
 
 	/**

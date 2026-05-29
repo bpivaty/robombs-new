@@ -882,7 +882,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	 */
 	private void initGUI() throws Exception {
 		messages = new Table("msgs", 3, 1, 10, height - 60, 500, height - 10);
-		serverSel = new ServerSelection(browser, this, buffer.getOutputHeight());
+		serverSel = new ServerSelection(browser, this, buffer.getOutputWidth(), buffer.getOutputHeight());
 		serverSel.setVisible(false);
 		bigFont = TextBlitter.create(buffer.getOutputWidth() / 20);
 		createMessageText("Click to respawn!", true);

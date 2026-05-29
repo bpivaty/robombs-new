@@ -15,6 +15,7 @@ public class Label extends GUIComponent {
     private int xp = 0;
     private int yp = 0;
     private GLFont font=null;
+    private GLFont defaultFont=null;
     private Color col=null;
 
     /**
@@ -50,9 +51,12 @@ public class Label extends GUIComponent {
     public void draw(FrameBuffer buffer) {
         if (visible) {
         	if (font==null) {
-        		TextBlitter.blitText(buffer, label, getParentX() + xp, getParentY() + yp);
+        		if (defaultFont == null || defaultFont.font.getSize() != Math.max(15, scaleValue(15))) {
+        			defaultFont = GLFont.getGLFont(new Font("Arial", Font.BOLD, Math.max(15, scaleValue(15))));
+        		}
+        		TextBlitter.blitText(defaultFont, buffer, label, getParentX() + scaleValue(xp), getParentY() + scaleValue(yp), col);
         	} else {
-        		TextBlitter.blitText(font, buffer, label, getParentX() + xp, getParentY() + yp, col);
+        		TextBlitter.blitText(font, buffer, label, getParentX() + scaleValue(xp), getParentY() + scaleValue(yp), col);
         	}
             super.draw(buffer);
         }
