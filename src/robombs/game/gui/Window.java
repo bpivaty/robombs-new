@@ -2,8 +2,9 @@ package robombs.game.gui;
 
 import robombs.game.util.*;
 
-import java.util.*;
-import java.awt.*;
+import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.threed.jpct.*;
 import com.threed.jpct.util.*;
@@ -108,7 +109,7 @@ public class Window extends GUIComponent {
         if (visible) {
         	int scaledWidth = scaleValue(backDrop.getWidth());
         	int scaledHeight = scaleValue(backDrop.getHeight());
-            buffer.blit(backDrop, 0, 0, getX(), getY(), backDrop.getWidth(), backDrop.getHeight(), scaledWidth, scaledHeight, FrameBuffer.TRANSPARENT_BLITTING);
+            buffer.blit(backDrop, 0, 0, getX(), getY(), backDrop.getWidth(), backDrop.getHeight(), scaledWidth, scaledHeight, FrameBuffer.TRANSPARENT_BLITTING, false, null);
             if (lowerRight!=null) {
             	int scaledFontSize = Math.max(12, scaleValue(12));
             	if (font.font.getSize() != scaledFontSize) {
