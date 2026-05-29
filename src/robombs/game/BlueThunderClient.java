@@ -28,6 +28,11 @@ import com.threed.jpct.util.*;
  */
 public class BlueThunderClient extends AbstractClient implements DataTransferListener, ClientPreProcessor, GameClient, SelectionListener, EventProcessor {
 
+	private static final int MIN_WINDOWED_WIDTH = 640;
+	private static final int MIN_WINDOWED_HEIGHT = 480;
+	private static final int MAX_WINDOWED_WIDTH = 1280;
+	private static final int MAX_WINDOWED_HEIGHT = 720;
+
 	static {
 		Config.glVSync = false;
 		Config.glUseUnappropriateModes = true;
@@ -981,15 +986,16 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 
 	private void initBuffer() {
 		Logger.setOnError(Logger.ON_ERROR_THROW_EXCEPTION);
-
-		Config.glFullscreen = fullScreen;
-
-		buffer = new FrameBuffer(width, height, this.antiAliasing * 10); // Relies
-		// on
-		// the
-		// constants...:-)
-		buffer.disableRenderer(IRenderer.RENDERER_SOFTWARE);
-		buffer.enableRenderer(IRenderer.RENDERER_OPENGL);
+		try {
+			buffer = createBuffer(width, height, fullScreen);
+		} catch (RuntimeException e) {
+			if (!fullScreen) {
+				throw e;
+			}
+			Logger.log("Fullscreen initialization failed (" + getErrorMessage(e) + ") - retrying in windowed mode");
+			applyWindowedFallbackResolution();
+			buffer = createBuffer(width, height, false);
+		}
 
 		shadows = shadows && buffer.supports(FrameBuffer.SUPPORT_FOR_SHADOW_MAPPING);
 		/*
@@ -1004,6 +1010,34 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 		mouse = new MouseMapper(buffer);
 		fireTicker = new Ticker(900);
 		bombTicker = new Ticker(200);
+	}
+
+	private FrameBuffer createBuffer(int targetWidth, int targetHeight, boolean useFullscreen) {
+		Config.glFullscreen = useFullscreen;
+		FrameBuffer newBuffer = new FrameBuffer(targetWidth, targetHeight, this.antiAliasing * 10);
+		try {
+			newBuffer.disableRenderer(IRenderer.RENDERER_SOFTWARE);
+			newBuffer.enableRenderer(IRenderer.RENDERER_OPENGL);
+			return newBuffer;
+		} catch (RuntimeException e) {
+			newBuffer.dispose();
+			throw e;
+		}
+	}
+
+	private void applyWindowedFallbackResolution() {
+		fullScreen = false;
+		adaptResolutionToScreen();
+		width = Math.max(MIN_WINDOWED_WIDTH, Math.min(width, MAX_WINDOWED_WIDTH));
+		height = Math.max(MIN_WINDOWED_HEIGHT, Math.min(height, MAX_WINDOWED_HEIGHT));
+	}
+
+	private String getErrorMessage(RuntimeException e) {
+		String message = e.getMessage();
+		if (message == null || message.trim().isEmpty()) {
+			return e.getClass().getSimpleName();
+		}
+		return message;
 	}
 
 	/**
