@@ -19,7 +19,7 @@ public class SoundManager {
 	
 	private SoundSystem soundSys=null;
 	private Map<String, String> sounds=null;
-	private final Set<String> missingSoundFiles=new HashSet<String>();
+	private final Set<String> warnedMissingSounds=new HashSet<String>();
 	private final Set<String> unknownSounds=new HashSet<String>();
 	private long curTicks=0;
 	private float lastAngle=ANGLE_NOT_CHANGED;
@@ -79,8 +79,8 @@ public class SoundManager {
 		String resolved=resolveSoundFile(fileName);
 		if (resolved!=null) {
 			sounds.put(name, resolved);
-		} else if (missingSoundFiles.add(fileName)) {
-			Logger.log("Missing sound resource '"+fileName+"' and fallback '"+FALLBACK_SOUND+"'!", Logger.WARNING);
+		} else if (warnedMissingSounds.add(fileName)) {
+			Logger.log("Missing sound resource '"+fileName+"' and fallback '"+FALLBACK_SOUND+"' is unavailable: sound '"+name+"' will be skipped!", Logger.WARNING);
 		}
 	}
 	
@@ -125,10 +125,13 @@ public class SoundManager {
 		if (exists(fileName)) {
 			return fileName;
 		}
-		if (missingSoundFiles.add(fileName)) {
-			Logger.log("Missing sound resource '"+fileName+"', using fallback '"+FALLBACK_SOUND+"'!", Logger.WARNING);
+		if (exists(FALLBACK_SOUND)) {
+			if (warnedMissingSounds.add(fileName)) {
+				Logger.log("Missing sound resource '"+fileName+"', using fallback '"+FALLBACK_SOUND+"'!", Logger.WARNING);
+			}
+			return FALLBACK_SOUND;
 		}
-		return exists(FALLBACK_SOUND) ? FALLBACK_SOUND : null;
+		return null;
 	}
 
 	private boolean exists(String fileName) {
