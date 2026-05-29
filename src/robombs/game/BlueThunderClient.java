@@ -44,7 +44,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 		Config.lightMul = 2;
 		Config.glTriangleStrips = false;
 
-		Config.glBufferedBlits = true;
+		Config.glBufferedBlits = false;
 		Config.glUseVBO = Globals.useVBO;
 	}
 
