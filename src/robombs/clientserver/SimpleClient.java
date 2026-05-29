@@ -27,6 +27,7 @@ public class SimpleClient {
     private PerformanceCounter pc = new PerformanceCounter("Client");
 
     private final static Object SYNC = new Object();
+    private final Object WAKEUP = new Object();
 
     /**
      * Creates a new SimpleClient. The client won't connect to the server unless the connect()-method has been called.
@@ -108,9 +109,8 @@ public class SimpleClient {
        synchronized (SYNC) {
            nextData = c;
        }
-       if (waitingForData) {
-    	   // Already waiting for data? Interrupt that...
-    	   senderThread.interrupt();
+       synchronized (WAKEUP) {
+           WAKEUP.notifyAll();
        }
    }
 
@@ -135,7 +135,9 @@ public class SimpleClient {
      * This increases network load but smoothes movement of remote entities.
      */
     public void triggerTransfer() {
-    	senderThread.interrupt();
+    	synchronized (WAKEUP) {
+    		WAKEUP.notifyAll();
+    	}
     }
 
     /**
@@ -334,12 +336,14 @@ public class SimpleClient {
                         
                         long st=Math.min(NetGlobals.clientWaitTime, Math.max(0,NetGlobals.clientWaitTime-end));
                         if (st>=0) {
-                        	try {
-                        		Thread.sleep(st);
-                        	} catch(Exception e) {
-                        		pc.interrupted();
-	                        	// This is intentionally
-	                        }
+                        	synchronized (WAKEUP) {
+                        		try {
+                        			WAKEUP.wait(st);
+                        		} catch(InterruptedException e) {
+                        			pc.interrupted();
+                        			// This is intentionally
+                        		}
+                        	}
                         } else {
                         	Thread.yield();
                         }
@@ -348,11 +352,13 @@ public class SimpleClient {
 	                    	// This branch is entered only, if the client doesn't return any data to
 	                    	// send. This happens almost never...
 	                    	waitingForData=true;
-	                    	try {
-	                    		Thread.sleep(10);
-	                    	} catch(Exception e) {
-	                        	// This is intentionally
-	                        }
+	                    	synchronized (WAKEUP) {
+	                    		try {
+	                    			WAKEUP.wait(10);
+	                    		} catch(InterruptedException e) {
+	                    			// This is intentionally
+	                    		}
+	                    	}
 	                    	waitingForData=false;
                     	} else {
                     		disconnectInternal();
