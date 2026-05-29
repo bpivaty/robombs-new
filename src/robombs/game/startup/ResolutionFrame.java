@@ -19,7 +19,7 @@ public class ResolutionFrame {
 		final ResolutionPanel rp=new ResolutionPanel(jf);
 		ActionListener al=new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				Thread.ofVirtual().start(() -> {
+				Thread.ofPlatform().start(() -> {
 					try {
 						rp.save();
 						sl.selected(rp.getMode(), rp.isFullscreen(), rp.getShadowQuality(), rp.getShadowFiltering(), rp.getAntiAliasingMode(), rp.getMouseSpeed());
