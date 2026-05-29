@@ -300,7 +300,7 @@ public class ResolutionPanel extends JPanel {
 		collectFeatures();
 
 		setBackground(java.awt.Color.WHITE);
-		Dimension size = new Dimension(305, 370);
+		Dimension size = new Dimension(305, 430);
 		this.setPreferredSize(size);
 
 		FlowLayout fl = new FlowLayout(FlowLayout.LEFT);
@@ -342,7 +342,7 @@ public class ResolutionPanel extends JPanel {
 		subPanel = new JPanel();
 		subPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		subPanel.setBackground(gray);
-		Dimension size2 = new Dimension(305, 325);
+		Dimension size2 = new Dimension(305, 380);
 		subPanel.setPreferredSize(size2);
 		subPanel.setLayout(fl);
 
@@ -352,7 +352,7 @@ public class ResolutionPanel extends JPanel {
 		options.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if (!optionsVisible) {
-					Dimension dim = new Dimension(320, 425 + Math.max(0, pf.getInsets().bottom));
+					Dimension dim = new Dimension(320, 480 + Math.max(0, pf.getInsets().bottom));
 					pf.setPreferredSize(dim);
 					pf.setMinimumSize(dim);
 					pf.setMaximumSize(dim);
