@@ -1,11 +1,6 @@
 package robombs.game;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GraphicsEnvironment;
-import java.awt.HeadlessException;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.net.InetAddress;
 import java.util.*;
 import javax.swing.*;
@@ -27,11 +22,6 @@ import com.threed.jpct.util.*;
  * simple server browser to join an existing server or start a new one.
  */
 public class BlueThunderClient extends AbstractClient implements DataTransferListener, ClientPreProcessor, GameClient, SelectionListener, EventProcessor {
-
-	private static final int MIN_WINDOWED_WIDTH = 640;
-	private static final int MIN_WINDOWED_HEIGHT = 480;
-	private static final int MAX_WINDOWED_WIDTH = 1280;
-	private static final int MAX_WINDOWED_HEIGHT = 720;
 
 	static {
 		Config.glVSync = false;
@@ -133,7 +123,6 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	 * @throws Exception
 	 */
 	public BlueThunderClient(String[] args) throws Exception {
-		adaptResolutionToScreen();
 		if (args.length > 0) {
 			if (args[0].equals("nada")) {
 				shadows = false;
@@ -143,32 +132,13 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	}
 
 	public BlueThunderClient() throws Exception {
-		adaptResolutionToScreen();
-	}
-
-	private void adaptResolutionToScreen() {
-		try {
-			Rectangle usableScreenBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-			if (usableScreenBounds.width > 0 && usableScreenBounds.height > 0) {
-				width = usableScreenBounds.width;
-				height = usableScreenBounds.height;
-			} else {
-				Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-				if (screen.width > 0 && screen.height > 0) {
-					width = screen.width;
-					height = screen.height;
-				}
-			}
-		} catch (HeadlessException e) {
-			// Keep the default 800x600 fallback from field initialization.
-		}
 	}
 
 	public void selected(VideoMode vm, boolean fullScreen, int shadowQuality, boolean shadowFiltering, int aa, int mouseSpeed) throws Exception {
 		Config.glSetDesiredVideoMode(vm, false);
-		width = vm.width;
-		height = vm.height;
-		this.fullScreen = fullScreen;
+		width = vm.width * 2;
+		height = vm.height * 2;
+		this.fullScreen = false;
 		if (shadowQuality == 0) {
 			shadows = false;
 		} else {
@@ -986,16 +956,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 
 	private void initBuffer() {
 		Logger.setOnError(Logger.ON_ERROR_THROW_EXCEPTION);
-		try {
-			buffer = createBuffer(width, height, fullScreen);
-		} catch (RuntimeException e) {
-			if (!fullScreen) {
-				throw e;
-			}
-			Logger.log("Fullscreen initialization failed (" + getErrorMessage(e) + ") - retrying in windowed mode");
-			applyWindowedFallbackResolution();
-			buffer = createBuffer(width, height, false);
-		}
+		buffer = createBuffer(width, height, false);
 
 		shadows = shadows && buffer.supports(FrameBuffer.SUPPORT_FOR_SHADOW_MAPPING);
 		/*
@@ -1023,21 +984,6 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			newBuffer.dispose();
 			throw e;
 		}
-	}
-
-	private void applyWindowedFallbackResolution() {
-		fullScreen = false;
-		adaptResolutionToScreen();
-		width = Math.max(MIN_WINDOWED_WIDTH, Math.min(width, MAX_WINDOWED_WIDTH));
-		height = Math.max(MIN_WINDOWED_HEIGHT, Math.min(height, MAX_WINDOWED_HEIGHT));
-	}
-
-	private String getErrorMessage(RuntimeException e) {
-		String message = e.getMessage();
-		if (message == null || message.trim().isEmpty()) {
-			return e.getClass().getSimpleName();
-		}
-		return message;
 	}
 
 	/**
