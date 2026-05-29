@@ -682,7 +682,6 @@ public class ResolutionPanel extends JPanel {
 
 			probs.put("refresh", String.valueOf(rez.getSelectedItem()));
 			probs.put("filtering", String.valueOf(shadowFilter.isSelected()));
-			probs.put("fullscreen", String.valueOf(fullscreen.isSelected()));
 			probs.put("mouse", String.valueOf(mouse.getValue()));
 			probs.put("zbias", String.valueOf(Config.glShadowZBias));
 			probs.put("shadows", String.valueOf(shadows.getValue()));
