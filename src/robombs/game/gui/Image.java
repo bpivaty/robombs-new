@@ -58,7 +58,7 @@ public class Image extends GUIComponent {
     public void draw(FrameBuffer buffer) {
         if (visible) {
         	if (img!=null) {
-        		buffer.blit(img, 0, 0, getParentX()+scaleValue(xp), getParentY()+scaleValue(yp), img.getWidth(), img.getHeight(), scaleValue(xSize), scaleValue(ySize), -1, false, null);
+        		buffer.blit(img, 0, 0, getParentX()+scaleValue(xp), getParentY()+scaleValue(yp), img.getWidth(), img.getHeight(), scaleValue(xSize), scaleValue(ySize), -1f, false, null);
         	}
             super.draw(buffer);
         }
