@@ -28,6 +28,11 @@ import com.threed.jpct.util.*;
  */
 public class BlueThunderClient extends AbstractClient implements DataTransferListener, ClientPreProcessor, GameClient, SelectionListener, EventProcessor {
 
+	private static final int MIN_WINDOWED_WIDTH = 640;
+	private static final int MIN_WINDOWED_HEIGHT = 480;
+	private static final int MAX_WINDOWED_WIDTH = 1280;
+	private static final int MAX_WINDOWED_HEIGHT = 720;
+
 	static {
 		Config.glVSync = false;
 		Config.glUseUnappropriateModes = true;
@@ -987,7 +992,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			if (!fullScreen) {
 				throw e;
 			}
-			Logger.log("Fullscreen initialization failed - retrying in windowed mode");
+			Logger.log("Fullscreen initialization failed (" + e.getMessage() + ") - retrying in windowed mode");
 			applyWindowedFallbackResolution();
 			buffer = createBuffer(width, height, false);
 		}
@@ -1023,8 +1028,8 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	private void applyWindowedFallbackResolution() {
 		fullScreen = false;
 		adaptResolutionToScreen();
-		width = Math.max(640, Math.min(width, 1280));
-		height = Math.max(480, Math.min(height, 720));
+		width = Math.max(MIN_WINDOWED_WIDTH, Math.min(width, MAX_WINDOWED_WIDTH));
+		height = Math.max(MIN_WINDOWED_HEIGHT, Math.min(height, MAX_WINDOWED_HEIGHT));
 	}
 
 	/**
