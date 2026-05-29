@@ -120,7 +120,6 @@ public class ResolutionPanel extends JPanel {
 
 			canDoShaders = shaderModel != 9999 && shaderModel > 1;
 
-			Display.destroy();
 			String adapter = vendor + "-" + renderer + "/" + canDoShadows + "/" + canDoBloom + "/" + canDoAA + "/" + canDoFBO + "/" + canDoShaders;
 			System.out.println(adapter);
 			Globals.graphicsAdapter = adapter;
@@ -275,9 +274,13 @@ public class ResolutionPanel extends JPanel {
 				}
 			}
 
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 			System.out.println("Unable to detect hardware!");
+		} finally {
+			if (Display.isCreated()) {
+				Display.destroy();
+			}
 		}
 
 		jd.setVisible(false);
