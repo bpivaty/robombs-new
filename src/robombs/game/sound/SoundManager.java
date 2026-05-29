@@ -3,6 +3,8 @@ package robombs.game.sound;
 import paulscode.sound.*;
 
 import com.threed.jpct.*;
+import java.io.File;
+import java.net.URL;
 import java.util.*;
 import robombs.game.*;
 
@@ -17,10 +19,13 @@ public class SoundManager {
 	
 	private SoundSystem soundSys=null;
 	private Map<String, String> sounds=null;
+	private final Set<String> warnedMissingSounds=new HashSet<String>();
+	private final Set<String> unknownSounds=new HashSet<String>();
 	private long curTicks=0;
 	private float lastAngle=ANGLE_NOT_CHANGED;
 	private Map<String, String> mapping=new HashMap<String, String>();
 	private SimpleVector listener=new SimpleVector();
+	private static final String FALLBACK_SOUND="res/ding.wav";
 	
 	
 	public static synchronized SoundManager getInstance() {
@@ -71,7 +76,18 @@ public class SoundManager {
 	}
 	
 	public void addSound(String name, String fileName) {
-		sounds.put(name, fileName);
+		if (fileName==null || fileName.isEmpty()) {
+			if (warnedMissingSounds.add("invalid:"+name)) {
+				Logger.log("Sound '"+name+"' has no valid file configured and will be skipped!", Logger.WARNING);
+			}
+			return;
+		}
+		String resolved=resolveSoundFile(fileName);
+		if (resolved!=null) {
+			sounds.put(name, resolved);
+		} else if (warnedMissingSounds.add(fileName)) {
+			Logger.log("Missing sound resource '"+fileName+"' and fallback '"+FALLBACK_SOUND+"' is unavailable: sound '"+name+"' will be skipped!", Logger.WARNING);
+		}
 	}
 	
 	public void play(String sound, SimpleVector pos) {
@@ -104,9 +120,40 @@ public class SoundManager {
 					throw new RuntimeException("Unable to play sound: "+sound+"/"+fn,e);
 				}
 			} else {
-				throw new RuntimeException("Sound '"+sound+"' is unknown to the SoundManager!");
+				if (unknownSounds.add(sound)) {
+					Logger.log("Sound '"+sound+"' is not available and will be skipped!", Logger.WARNING);
+				}
 			}
 		}
+	}
+
+	private String resolveSoundFile(String fileName) {
+		if (exists(fileName)) {
+			return fileName;
+		}
+		if (exists(FALLBACK_SOUND)) {
+			if (warnedMissingSounds.add(fileName)) {
+				Logger.log("Missing sound resource '"+fileName+"', using fallback '"+FALLBACK_SOUND+"'!", Logger.WARNING);
+			}
+			return FALLBACK_SOUND;
+		}
+		return null;
+	}
+
+	private boolean exists(String fileName) {
+		if (fileName==null || fileName.isEmpty()) {
+			return false;
+		}
+		String soundFilesPackage=SoundSystemConfig.getSoundFilesPackage();
+		String soundPath=soundFilesPackage.endsWith("/") || soundFilesPackage.isEmpty() ? soundFilesPackage+fileName : soundFilesPackage+"/"+fileName;
+		URL resource=SoundManager.class.getClassLoader().getResource(soundPath);
+		if (resource!=null) {
+			return true;
+		}
+		if (new File(soundPath).isFile()) {
+			return true;
+		}
+		return new File(fileName).isFile();
 	}
 	
 	public void move(String sound, SimpleVector pos) {
