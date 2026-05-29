@@ -33,14 +33,14 @@ public class ResolutionFrame {
 		};
 		rp.setActionListener(al);
 		jf.add(rp);
-		Dimension dim=new Dimension(320,425);
+		Dimension dim=new Dimension(320,480);
 		jf.setPreferredSize(dim);
 		jf.setMinimumSize(dim);
 		jf.setMaximumSize(dim);
 		jf.setSize(dim);
 		jf.setVisible(true);
 		int add=Math.max(0, jf.getInsets().bottom);
-		dim=new Dimension(320,425+add);
+		dim=new Dimension(320,480+add);
 		jf.setPreferredSize(dim);
 		jf.setMinimumSize(dim);
 		jf.setMaximumSize(dim);
