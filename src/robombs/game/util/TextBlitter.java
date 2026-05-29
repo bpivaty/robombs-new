@@ -55,12 +55,14 @@ public class TextBlitter {
 		}
 
 		StringBuilder fitted = new StringBuilder(line.length());
+		int width = 0;
 		for (int i = 0; i < line.length(); i++) {
-			fitted.append(line.charAt(i));
-			if (getWidth(font, fitted.toString()) > maxWidth) {
-				fitted.deleteCharAt(fitted.length() - 1);
+			char character = line.charAt(i);
+			width += getWidth(font, Character.toString(character));
+			if (width > maxWidth) {
 				break;
 			}
+			fitted.append(character);
 		}
 		return fitted.toString();
     }
