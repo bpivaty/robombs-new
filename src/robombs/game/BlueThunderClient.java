@@ -992,7 +992,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			if (!fullScreen) {
 				throw e;
 			}
-			Logger.log("Fullscreen initialization failed (" + e.getMessage() + ") - retrying in windowed mode");
+			Logger.log("Fullscreen initialization failed (" + getErrorMessage(e) + ") - retrying in windowed mode");
 			applyWindowedFallbackResolution();
 			buffer = createBuffer(width, height, false);
 		}
@@ -1030,6 +1030,14 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 		adaptResolutionToScreen();
 		width = Math.max(MIN_WINDOWED_WIDTH, Math.min(width, MAX_WINDOWED_WIDTH));
 		height = Math.max(MIN_WINDOWED_HEIGHT, Math.min(height, MAX_WINDOWED_HEIGHT));
+	}
+
+	private String getErrorMessage(RuntimeException e) {
+		String message = e.getMessage();
+		if (message == null || message.trim().isEmpty()) {
+			return e.getClass().getSimpleName();
+		}
+		return message;
 	}
 
 	/**
