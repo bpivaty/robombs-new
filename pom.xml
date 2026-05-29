@@ -55,6 +55,10 @@
                 <directory>src/res</directory>
                 <targetPath>res</targetPath>
             </resource>
+            <resource>
+                <directory>src/data</directory>
+                <targetPath>data</targetPath>
+            </resource>
         </resources>
         <plugins>
             <plugin>
