@@ -77,7 +77,7 @@ public class SoundManager {
 	
 	public void addSound(String name, String fileName) {
 		if (fileName==null || fileName.isEmpty()) {
-			if (warnedMissingSounds.add(String.valueOf(fileName))) {
+			if (warnedMissingSounds.add("invalid:"+name)) {
 				Logger.log("Sound '"+name+"' has no valid file configured and will be skipped!", Logger.WARNING);
 			}
 			return;
@@ -144,7 +144,8 @@ public class SoundManager {
 		if (fileName==null || fileName.isEmpty()) {
 			return false;
 		}
-		String soundPath=SoundSystemConfig.getSoundFilesPackage()+fileName;
+		String soundFilesPackage=SoundSystemConfig.getSoundFilesPackage();
+		String soundPath=soundFilesPackage.endsWith("/") || soundFilesPackage.isEmpty() ? soundFilesPackage+fileName : soundFilesPackage+"/"+fileName;
 		URL resource=SoundManager.class.getClassLoader().getResource(soundPath);
 		if (resource!=null) {
 			return true;
