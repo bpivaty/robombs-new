@@ -1,6 +1,11 @@
 package robombs.game;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.net.InetAddress;
 import java.util.*;
 import javax.swing.*;
@@ -123,6 +128,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	 * @throws Exception
 	 */
 	public BlueThunderClient(String[] args) throws Exception {
+		adaptResolutionToScreen();
 		if (args.length > 0) {
 			if (args[0].equals("nada")) {
 				shadows = false;
@@ -132,6 +138,25 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	}
 
 	public BlueThunderClient() throws Exception {
+		adaptResolutionToScreen();
+	}
+
+	private void adaptResolutionToScreen() {
+		try {
+			Rectangle usableScreenBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+			if (usableScreenBounds.width > 0 && usableScreenBounds.height > 0) {
+				width = usableScreenBounds.width;
+				height = usableScreenBounds.height;
+			} else {
+				Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+				if (screen.width > 0 && screen.height > 0) {
+					width = screen.width;
+					height = screen.height;
+				}
+			}
+		} catch (HeadlessException e) {
+			// Keep the default 800x600 fallback from field initialization.
+		}
 	}
 
 	public void selected(VideoMode vm, boolean fullScreen, int shadowQuality, boolean shadowFiltering, int aa, int mouseSpeed) throws Exception {
