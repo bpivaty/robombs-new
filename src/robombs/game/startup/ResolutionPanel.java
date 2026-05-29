@@ -324,8 +324,8 @@ public class ResolutionPanel extends JPanel {
 		fullscreen.setBackground(Color.WHITE);
 		fullscreen.setText("Fullscreen");
 		fullscreen.setSelected(true);
-		fullscreen.setEnabled(false);
-		fullscreen.setToolTipText("Fullscreen mode is always enabled");
+		fullscreen.setEnabled(true);
+		fullscreen.setToolTipText("Toggle fullscreen mode");
 
 		final JFrame pf = parentFrame;
 
@@ -626,7 +626,8 @@ public class ResolutionPanel extends JPanel {
 				modes.setSelectedItem(mode);
 
 				shadowFilter.setSelected(Boolean.valueOf((String) probs.get("filtering")).booleanValue());
-				fullscreen.setSelected(true);
+				String fullscreenMode = (String) probs.get("fullscreen");
+				fullscreen.setSelected(fullscreenMode == null || Boolean.parseBoolean(fullscreenMode));
 
 				rez.setSelectedItem(Integer.valueOf((String) probs.get("refresh")));
 				Config.glShadowZBias = Float.valueOf((String) probs.get("zbias")).floatValue();
@@ -681,6 +682,7 @@ public class ResolutionPanel extends JPanel {
 			}
 
 			probs.put("refresh", String.valueOf(rez.getSelectedItem()));
+			probs.put("fullscreen", String.valueOf(fullscreen.isSelected()));
 			probs.put("filtering", String.valueOf(shadowFilter.isSelected()));
 			probs.put("mouse", String.valueOf(mouse.getValue()));
 			probs.put("zbias", String.valueOf(Config.glShadowZBias));
