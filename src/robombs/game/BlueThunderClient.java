@@ -136,6 +136,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 
 	public void selected(VideoMode vm, boolean fullScreen, int shadowQuality, boolean shadowFiltering, int aa, int mouseSpeed) throws Exception {
 		Config.glSetDesiredVideoMode(vm, fullScreen);
+		// Use selected mode directly; oversized buffers made the game area appear too small on modern displays.
 		width = vm.width;
 		height = vm.height;
 		this.fullScreen = fullScreen;

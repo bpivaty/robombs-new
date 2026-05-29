@@ -627,7 +627,7 @@ public class ResolutionPanel extends JPanel {
 
 				shadowFilter.setSelected(Boolean.valueOf((String) probs.get("filtering")).booleanValue());
 				String fullscreenMode = (String) probs.get("fullscreen");
-				fullscreen.setSelected(fullscreenMode == null ? true : Boolean.valueOf(fullscreenMode).booleanValue());
+				fullscreen.setSelected(fullscreenMode == null || Boolean.parseBoolean(fullscreenMode));
 
 				rez.setSelectedItem(Integer.valueOf((String) probs.get("refresh")));
 				Config.glShadowZBias = Float.valueOf((String) probs.get("zbias")).floatValue();
