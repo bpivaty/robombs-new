@@ -1,6 +1,9 @@
 package robombs.game;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.HeadlessException;
+import java.awt.Toolkit;
 import java.net.InetAddress;
 import java.util.*;
 import javax.swing.*;
@@ -123,6 +126,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	 * @throws Exception
 	 */
 	public BlueThunderClient(String[] args) throws Exception {
+		adaptResolutionToScreen();
 		if (args.length > 0) {
 			if (args[0].equals("nada")) {
 				shadows = false;
@@ -132,6 +136,19 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	}
 
 	public BlueThunderClient() throws Exception {
+		adaptResolutionToScreen();
+	}
+
+	private void adaptResolutionToScreen() {
+		try {
+			Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+			if (screen != null && screen.width > 0 && screen.height > 0) {
+				width = screen.width;
+				height = screen.height;
+			}
+		} catch (HeadlessException e) {
+			// Keep fallback size.
+		}
 	}
 
 	public void selected(VideoMode vm, boolean fullScreen, int shadowQuality, boolean shadowFiltering, int aa, int mouseSpeed) throws Exception {
