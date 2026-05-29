@@ -3,6 +3,8 @@ package robombs.game.sound;
 import paulscode.sound.*;
 
 import com.threed.jpct.*;
+import java.io.File;
+import java.net.URL;
 import java.util.*;
 import robombs.game.*;
 
@@ -17,10 +19,13 @@ public class SoundManager {
 	
 	private SoundSystem soundSys=null;
 	private Map<String, String> sounds=null;
+	private final Set<String> missingSoundFiles=new HashSet<String>();
+	private final Set<String> unknownSounds=new HashSet<String>();
 	private long curTicks=0;
 	private float lastAngle=ANGLE_NOT_CHANGED;
 	private Map<String, String> mapping=new HashMap<String, String>();
 	private SimpleVector listener=new SimpleVector();
+	private static final String FALLBACK_SOUND="res/ding.wav";
 	
 	
 	public static synchronized SoundManager getInstance() {
@@ -71,7 +76,12 @@ public class SoundManager {
 	}
 	
 	public void addSound(String name, String fileName) {
-		sounds.put(name, fileName);
+		String resolved=resolveSoundFile(fileName);
+		if (resolved!=null) {
+			sounds.put(name, resolved);
+		} else if (missingSoundFiles.add(fileName)) {
+			Logger.log("Missing sound resource '"+fileName+"' and fallback '"+FALLBACK_SOUND+"'!", Logger.WARNING);
+		}
 	}
 	
 	public void play(String sound, SimpleVector pos) {
@@ -104,9 +114,30 @@ public class SoundManager {
 					throw new RuntimeException("Unable to play sound: "+sound+"/"+fn,e);
 				}
 			} else {
-				throw new RuntimeException("Sound '"+sound+"' is unknown to the SoundManager!");
+				if (unknownSounds.add(sound)) {
+					Logger.log("Sound '"+sound+"' is not available and will be skipped!", Logger.WARNING);
+				}
 			}
 		}
+	}
+
+	private String resolveSoundFile(String fileName) {
+		if (exists(fileName)) {
+			return fileName;
+		}
+		if (missingSoundFiles.add(fileName)) {
+			Logger.log("Missing sound resource '"+fileName+"', using fallback '"+FALLBACK_SOUND+"'!", Logger.WARNING);
+		}
+		return exists(FALLBACK_SOUND) ? FALLBACK_SOUND : null;
+	}
+
+	private boolean exists(String fileName) {
+		if (fileName==null || fileName.isEmpty()) {
+			return false;
+		}
+		String soundPath=SoundSystemConfig.getSoundFilesPackage()+fileName;
+		URL resource=SoundManager.class.getClassLoader().getResource(soundPath);
+		return resource!=null || new File(soundPath).isFile() || new File(fileName).isFile();
 	}
 	
 	public void move(String sound, SimpleVector pos) {
