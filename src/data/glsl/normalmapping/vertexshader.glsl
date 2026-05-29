@@ -1,31 +1,37 @@
-uniform float invRadius;
-
-attribute vec4 tangent;
-
-varying vec3 lightDir;
+varying vec3 lightVec; 
 varying vec3 eyeVec;
-varying float attenuation;
+varying vec2 texCoord;					 
 
-void main()
+void main(void)
 {
-    vec4 vert = gl_ModelViewMatrix * gl_Vertex;
-    vec3 n = normalize(gl_NormalMatrix * gl_Normal);
-    vec3 t = normalize(gl_NormalMatrix * tangent.xyz);
-    vec3 b = cross(n, t) * tangent.w;
+	gl_Position = ftransform();
+	texCoord = gl_MultiTexCoord0.xy;
+	
+	// jPCT doesn't provide the tangent vector...compute it (this isn't 100% accurate...) 
+		
+	vec3 c1 = cross(gl_Normal, vec3(0.0, 0.0, 1.0)); 
+	vec3 c2 = cross(gl_Normal, vec3(0.0, 1.0, 0.0));
+	
+	vec3 vTangent=c1;
+	if (length(c2)>length(vTangent)) {
+		vTangent=c2;
+	}
+	
+	vTangent = normalize(vTangent);
 
-    // Transposed TBN: transforms vectors from eye space into tangent space
-    mat3 tbn = mat3(t.x, b.x, n.x,
-                    t.y, b.y, n.y,
-                    t.z, b.z, n.z);
+	vec3 n = normalize(gl_NormalMatrix * gl_Normal);
+	vec3 t = normalize(gl_NormalMatrix * vTangent);
+	vec3 b = cross(n, t);
+	
+	vec3 vVertex = vec3(gl_ModelViewMatrix * gl_Vertex);
+	vec3 tmpVec = gl_LightSource[0].position.xyz - vVertex;
 
-    vec3 toLight = vec3(gl_LightSource[0].position.xyz - vert.xyz);
-    float dist = length(toLight);
-    attenuation = clamp(1.0 - invRadius * dist, 0.0, 1.0);
+	lightVec.x = dot(tmpVec, t);
+	lightVec.y = dot(tmpVec, b);
+	lightVec.z = dot(tmpVec, n);
 
-    lightDir = tbn * toLight;
-    eyeVec = tbn * (-vert.xyz);
-
-    gl_TexCoord[0] = gl_MultiTexCoord0;
-    gl_FrontColor = gl_Color;
-    gl_Position = ftransform();
+	tmpVec = -vVertex;
+	eyeVec.x = dot(tmpVec, t);
+	eyeVec.y = dot(tmpVec, b);
+	eyeVec.z = dot(tmpVec, n);
 }
