@@ -155,7 +155,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 				}
 			}
 		} catch (HeadlessException e) {
-			// Keep fallback size.
+			// Keep the default 800x600 fallback from field initialization.
 		}
 	}
 
