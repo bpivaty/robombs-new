@@ -135,10 +135,10 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	}
 
 	public void selected(VideoMode vm, boolean fullScreen, int shadowQuality, boolean shadowFiltering, int aa, int mouseSpeed) throws Exception {
-		Config.glSetDesiredVideoMode(vm, false);
-		width = vm.width * 2;
-		height = vm.height * 2;
-		this.fullScreen = false;
+		Config.glSetDesiredVideoMode(vm, fullScreen);
+		width = vm.width;
+		height = vm.height;
+		this.fullScreen = fullScreen;
 		if (shadowQuality == 0) {
 			shadows = false;
 		} else {
@@ -956,7 +956,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 
 	private void initBuffer() {
 		Logger.setOnError(Logger.ON_ERROR_THROW_EXCEPTION);
-		buffer = createBuffer(width, height, false);
+		buffer = createBuffer(width, height, fullScreen);
 
 		shadows = shadows && buffer.supports(FrameBuffer.SUPPORT_FOR_SHADOW_MAPPING);
 		/*
