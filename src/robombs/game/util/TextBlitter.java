@@ -29,25 +29,13 @@ public class TextBlitter {
     }
     
     public static void blitText(FrameBuffer buffer, String line, int x, int y, int maxX, int maxY) {
-    	Graphics graphics = buffer.getGraphics();
-    	if (graphics == null) {
+    	int clipWidth = maxX - x;
+    	int clipHeight = maxY - y;
+    	if (clipWidth <= 0 || clipHeight <= 0) {
     		return;
     	}
 
-    	try {
-    		int clipWidth = maxX - x;
-    		int clipHeight = maxY - y;
-    		if (clipWidth <= 0 || clipHeight <= 0) {
-    			return;
-    		}
-
-    		Shape oldClip = graphics.getClip();
-    		graphics.setClip(x, y, clipWidth, clipHeight);
-    		blitText(font, graphics, line, x, y, null);
-    		graphics.setClip(oldClip);
-		} finally {
-    		graphics.dispose();
-    	}
+    	blitText(font, buffer, fitToWidth(font, line, clipWidth), x, y, null);
     }
     
     public static int getWidth(GLFont font, String s) {
@@ -55,29 +43,26 @@ public class TextBlitter {
     }
     
     public static void blitText(GLFont font, FrameBuffer buffer, String line, int x, int y, Color col) {
-    	Graphics graphics = buffer.getGraphics();
-    	if (graphics == null) {
+    	if (line == null || line.isEmpty()) {
     		return;
     	}
-		try {
-			blitText(font, graphics, line, x, y, col);
-		} finally {
-			graphics.dispose();
-		}
+		font.blitString(buffer, line, x, y + baselineOffset(font), -1, col != null ? col : Color.WHITE);
     }
 
-    private static void blitText(GLFont font, Graphics graphics, String line, int x, int y, Color col) {
-		Color oldColor = graphics.getColor();
-		Font oldFont = graphics.getFont();
-		try {
-			graphics.setFont(font.font);
-			graphics.setColor(col != null ? col : Color.WHITE);
-			int offset = baselineOffset(font);
-			graphics.drawString(line, x, y + offset);
-		} finally {
-			graphics.setColor(oldColor);
-			graphics.setFont(oldFont);
+    private static String fitToWidth(GLFont font, String line, int maxWidth) {
+		if (line == null || line.isEmpty() || getWidth(font, line) <= maxWidth) {
+			return line;
 		}
+
+		StringBuilder fitted = new StringBuilder(line.length());
+		for (int i = 0; i < line.length(); i++) {
+			fitted.append(line.charAt(i));
+			if (getWidth(font, fitted.toString()) > maxWidth) {
+				fitted.deleteCharAt(fitted.length() - 1);
+				break;
+			}
+		}
+		return fitted.toString();
     }
 
 	private static int baselineOffset(GLFont font) {
