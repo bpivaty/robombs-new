@@ -908,7 +908,11 @@ public class ServerSelection implements DataChangeListener, GUIListener {
 		} else {
 			try {
 				port = Integer.parseInt(data);
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
+				// data is not a port number; treat it as a hostname/IP and use the default port
+				if (data != null && !data.isEmpty()) {
+					host = data;
+				}
 			}
 		}
 		try {
