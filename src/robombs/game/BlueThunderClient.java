@@ -24,7 +24,7 @@ import com.threed.jpct.util.*;
 public class BlueThunderClient extends AbstractClient implements DataTransferListener, ClientPreProcessor, GameClient, SelectionListener, EventProcessor {
 
 	static {
-		Config.glVSync = true;
+		Config.glVSync = false;
 		Config.glUseUnappropriateModes = true;
 		Config.glTransparencyOffset = 0.0f;
 		Config.maxTextures = 64;
@@ -44,7 +44,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 		Config.lightMul = 2;
 		Config.glTriangleStrips = false;
 
-		Config.glBufferedBlits = true;
+		Config.glBufferedBlits = false;
 		Config.glUseVBO = Globals.useVBO;
 	}
 

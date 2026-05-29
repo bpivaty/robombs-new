@@ -42,7 +42,7 @@ public class Globals {
 	public static boolean useShadowMesh = true;
 	public static float shadowMeshOffset = 1f;// 0.125f;
 	public static boolean renderWallShadows = true;
-	public static boolean shadowCulling = true;
+	public static boolean shadowCulling = false;
 
 	public static boolean useBombingGrid = true;
 	public static float bombingGridWidth = 6;
