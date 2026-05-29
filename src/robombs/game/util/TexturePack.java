@@ -190,7 +190,7 @@ public class TexturePack {
 	 *      FrameBuffer.blit(..)
 	 */
 	public Dimension blit(FrameBuffer buffer, int imageId, int destX, int destY,
-			float transparency, boolean additive, Color color) {
+			int transparency, boolean additive, Color color) {
 
 		if (texture == null)
 			throw new IllegalStateException("not packed yet");
@@ -214,7 +214,7 @@ public class TexturePack {
 	 *      FrameBuffer.blit(..)
 	 */
 	public Dimension blit(FrameBuffer buffer, int imageId, int destX, int destY,
-			int destWidth, int destHeight, float transparency, boolean additive, Color color) {
+			int destWidth, int destHeight, int transparency, boolean additive, Color color) {
 
 		if (texture == null)
 			throw new IllegalStateException("not packed yet");
@@ -247,7 +247,7 @@ public class TexturePack {
 	}
 
 	private Dimension blit(FrameBuffer buffer, Entry entry, int destX, int destY,
-			int destWidth, int destHeight, float transparency, boolean additive, Color color) {
+			int destWidth, int destHeight, int transparency, boolean additive, Color color) {
 
 		buffer.blit(texture, entry.bounds.x, entry.bounds.y, destX, destY, entry.bounds.width, entry.bounds.height,
 				destWidth, destHeight, transparency, additive, color);

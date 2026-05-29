@@ -185,7 +185,7 @@ public class GLFont {
 	 * @param y
 	 *            baseline
 	 */
-	public void blitString(FrameBuffer buffer, String s, int x, int y, float transparency, Color color) {
+	public void blitString(FrameBuffer buffer, String s, int x, int y, int transparency, Color color) {
 		y -= baseline;
 
 		for (int i = 0; i < s.length(); i++) {
