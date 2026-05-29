@@ -25,8 +25,9 @@ public class Table extends GUIComponent {
 	private float[] sizeRow = null;
 	private String label = "";
 	private boolean clicked = false;
+	private int fontSize = 15;
 
-	private GLFont font = GLFont.getGLFont(new Font("Arial", Font.BOLD, 15));
+	private GLFont font = GLFont.getGLFont(new Font("Arial", Font.BOLD, fontSize));
 
 	/**
 	 * Create a new table. The rows and columns will be sized according to the
@@ -72,6 +73,7 @@ public class Table extends GUIComponent {
 	}
 
 	public void setFontSize(int size) {
+		fontSize = size;
 		font = GLFont.getGLFont(new Font("Arial", Font.BOLD, size));
 	}
 
@@ -203,14 +205,18 @@ public class Table extends GUIComponent {
 				if (!clicked) {
 					int x = mouse.getMouseX();
 					int y = mouse.getMouseY();
-					if (x > xs + getParentX() && x < xe + getParentX() && y > ys + getParentY() && y < ye + getParentY()) {
+					int scaledXs = scaleValue(xs);
+					int scaledXe = scaleValue(xe);
+					int scaledYs = scaleValue(ys);
+					int scaledYe = scaleValue(ye);
+					if (x > scaledXs + getParentX() && x < scaledXe + getParentX() && y > scaledYs + getParentY() && y < scaledYe + getParentY()) {
 						int row = 0;
 						for (int yi = 0; yi < rows; yi++) {
 							float yr = 0;
 							for (int i = 0; i < yi; i++) {
-								yr += sizeRow[i];
+								yr += Math.round(sizeRow[i] * getScale());
 							}
-							if (y > yr + getParentY() + ys) {
+							if (y > yr + getParentY() + scaledYs) {
 								row = yi;
 							} else {
 								break;
@@ -231,16 +237,20 @@ public class Table extends GUIComponent {
 
 	public void draw(FrameBuffer buffer) {
 		if (visible) {
+			int scaledFontSize = Math.max(fontSize, scaleValue(fontSize));
+			if (font.font.getSize() != scaledFontSize) {
+				font = GLFont.getGLFont(new Font("Arial", Font.BOLD, scaledFontSize));
+			}
 			for (int y = 0; y < rows; y++) {
-				float yp = getParentY() + ys;
+				float yp = getParentY() + scaleValue(ys);
 				for (int i = y; i > 0; i--) {
-					yp += sizeRow[i - 1];
+					yp += Math.round(sizeRow[i - 1] * getScale());
 				}
 
 				for (int x = 0; x < cols; x++) {
-					int xp = getParentX() + xs;
+					int xp = getParentX() + scaleValue(xs);
 					for (int i = x; i > 0; i--) {
-						xp += sizeCol[i - 1];
+						xp += scaleValue(sizeCol[i - 1]);
 					}
 
 					Object c = content[y][x];

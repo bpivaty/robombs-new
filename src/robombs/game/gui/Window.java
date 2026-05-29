@@ -3,6 +3,7 @@ package robombs.game.gui;
 import robombs.game.util.*;
 
 import java.util.*;
+import java.awt.*;
 
 import com.threed.jpct.*;
 import com.threed.jpct.util.*;
@@ -18,7 +19,6 @@ public class Window extends GUIComponent {
 
     private int xDrag=-999;
     private int yDrag=-999;
-    private int width=0;
     private String lowerRight=null;
     private GLFont font=TextBlitter.create(12);
 
@@ -33,12 +33,10 @@ public class Window extends GUIComponent {
         setX(x);
         setY(y);
         this.backDrop=backDrop;
-        width=backDrop.getWidth();
     }
     
     public void setWindowTexture(Texture backDrop) {
     	this.backDrop=backDrop;
-    	width=backDrop.getWidth();
     }
     
     public void setText(String txt) {
@@ -54,8 +52,10 @@ public class Window extends GUIComponent {
                 int ypos = getY();
                 int y = mouse.getMouseY();
                 int x = mouse.getMouseX();
+                int scaledWidth = scaleValue(backDrop.getWidth());
+                int titleBarHeight = scaleValue(15);
 
-                if (x >= xpos && x <= width + xpos && y >= ypos && y <= 15 + ypos || xDrag != -999) {
+                if (x >= xpos && x <= scaledWidth + xpos && y >= ypos && y <= titleBarHeight + ypos || xDrag != -999) {
                     // title bar:
                     if (mouse.buttonDown(0)) {
                         if (xDrag == -999) {
@@ -106,10 +106,16 @@ public class Window extends GUIComponent {
     
     public void draw(FrameBuffer buffer) {
         if (visible) {
-            buffer.blit(backDrop, 0, 0, getX(), getY(), backDrop.getWidth(), backDrop.getHeight(), FrameBuffer.TRANSPARENT_BLITTING);
+        	int scaledWidth = scaleValue(backDrop.getWidth());
+        	int scaledHeight = scaleValue(backDrop.getHeight());
+            buffer.blit(backDrop, 0, 0, getX(), getY(), backDrop.getWidth(), backDrop.getHeight(), scaledWidth, scaledHeight, FrameBuffer.TRANSPARENT_BLITTING);
             if (lowerRight!=null) {
+            	int scaledFontSize = Math.max(12, scaleValue(12));
+            	if (font.font.getSize() != scaledFontSize) {
+            		font = GLFont.getGLFont(new Font("Arial", Font.BOLD, scaledFontSize));
+            	}
             	int w=TextBlitter.getWidth(font, lowerRight);
-            	TextBlitter.blitText(font, buffer, lowerRight, getX()+backDrop.getWidth()-w-15, getY()+backDrop.getHeight()-15, java.awt.Color.WHITE);
+            	TextBlitter.blitText(font, buffer, lowerRight, getX()+scaledWidth-w-scaleValue(15), getY()+scaledHeight-scaleValue(15), java.awt.Color.WHITE);
             }
             super.draw(buffer);
         }

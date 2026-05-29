@@ -2,6 +2,8 @@ package robombs.game.gui;
 
 import robombs.game.util.*;
 
+import java.awt.*;
+
 import com.threed.jpct.*;
 import com.threed.jpct.util.*;
 
@@ -14,6 +16,7 @@ public class Button extends GUIComponent{
        private GUIListener bl=null;
        private boolean clicked=false;
        private boolean hideLabel=false;
+       private GLFont font=null;
 
        public Button(int xpos, int ypos, int xdim, int ydim) {
           this.xp=xpos;
@@ -43,8 +46,12 @@ public class Button extends GUIComponent{
               boolean input = false;
               int x = mouse.getMouseX() - xpos;
               int y = mouse.getMouseY() - ypos;
+              int scaledX = scaleValue(xp);
+              int scaledY = scaleValue(yp);
+              int scaledWidth = scaleValue(xs);
+              int scaledHeight = scaleValue(ys);
               if (mouse.buttonDown(0)) {
-                  if (x >= xp && x <= xp + xs && y >= yp && y <= yp + ys) {
+                  if (x >= scaledX && x <= scaledX + scaledWidth && y >= scaledY && y <= scaledY + scaledHeight) {
                       if (!clicked) {
                           if (bl != null) {
                               bl.elementChanged(label, null);
@@ -64,8 +71,12 @@ public class Button extends GUIComponent{
       public void draw(FrameBuffer buffer) {
           if (visible) {
               if (!hideLabel) {
-                  int xc = xs / 2 - (TextBlitter.getWidth(label)/2) + xp;
-                  TextBlitter.blitText(buffer, label, getParentX() + xc, getParentY() + yp);
+                  if (font == null || font.font.getSize() != Math.max(15, scaleValue(15))) {
+                      font = GLFont.getGLFont(new Font("Arial", Font.BOLD, Math.max(15, scaleValue(15))));
+                  }
+                  int scaledWidth = scaleValue(xs);
+                  int xc = scaledWidth / 2 - (TextBlitter.getWidth(font, label) / 2) + scaleValue(xp);
+                  TextBlitter.blitText(font, buffer, label, getParentX() + xc, getParentY() + scaleValue(yp), null);
               }
               super.draw(buffer);
           }
