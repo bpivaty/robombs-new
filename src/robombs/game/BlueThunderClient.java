@@ -138,7 +138,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 		Config.glSetDesiredVideoMode(vm, false);
 		width = vm.width;
 		height = vm.height;
-		this.fullScreen = true;
+		this.fullScreen = fullScreen;
 		if (shadowQuality == 0) {
 			shadows = false;
 		} else {
