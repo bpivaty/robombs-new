@@ -1,25 +1,28 @@
+varying vec3 lightVec;
+varying vec3 eyeVec;
+varying vec2 texCoord;
+
 uniform sampler2D colorMap;
 uniform sampler2D normalMap;
+uniform float invRadius;
 
-varying vec3 lightDir;
-varying vec3 eyeVec;
-varying float attenuation;
-
-void main()
+void main (void)
 {
-    vec4 color = texture2D(colorMap, gl_TexCoord[0].st);
-    vec3 bump = normalize(texture2D(normalMap, gl_TexCoord[0].st).rgb * 2.0 - 1.0);
+	float distSqr = dot(lightVec, lightVec);
+	float att = clamp(1.0 - invRadius * sqrt(distSqr), 0.0, 1.0);
+	vec3 lVec = lightVec * inversesqrt(distSqr);
 
-    vec3 l = normalize(lightDir);
-    float NdotL = clamp(dot(bump, l), 0.0, 1.0);
-    vec4 diffuse = gl_LightSource[0].diffuse * NdotL * attenuation;
+	vec3 vVec = normalize(eyeVec);
+	vec4 base = texture2D(colorMap, texCoord);
+	vec3 bump = normalize(texture2D(normalMap, texCoord).xyz * 2.0 - 1.0);
 
-    vec3 r = reflect(-l, bump);
-    float spec = pow(clamp(dot(r, normalize(eyeVec)), 0.0, 1.0), 32.0);
-    vec4 specular = gl_LightSource[0].specular * spec * attenuation;
+	vec4 vAmbient = gl_LightSource[0].ambient * gl_FrontMaterial.ambient;
 
-    vec4 ambient = gl_LightModel.ambient * gl_FrontMaterial.ambient;
+	float diffuse = max(dot(lVec, bump), 0.0);
+	vec4 vDiffuse = gl_LightSource[0].diffuse * gl_FrontMaterial.diffuse * 	diffuse;	
 
-    gl_FragColor = color * (ambient + diffuse) + specular;
-    gl_FragColor.a = color.a * gl_Color.a;
+	float specular = clamp(pow(clamp(dot(reflect(-lVec, bump), vVec), 0.0, 1.0), gl_FrontMaterial.shininess),0.001,1.0);
+	vec4 vSpecular = gl_LightSource[0].specular * gl_FrontMaterial.specular * specular;	
+	
+	gl_FragColor = 3*(vAmbient*base + vDiffuse*base + vSpecular) * att;
 }
