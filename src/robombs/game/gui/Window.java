@@ -109,7 +109,7 @@ public class Window extends GUIComponent {
         if (visible) {
         	int scaledWidth = scaleValue(backDrop.getWidth());
         	int scaledHeight = scaleValue(backDrop.getHeight());
-            buffer.blit(backDrop, 0, 0, getX(), getY(), backDrop.getWidth(), backDrop.getHeight(), scaledWidth, scaledHeight, -1f, false, null);
+            buffer.blit(backDrop, 0, 0, getX(), getY(), backDrop.getWidth(), backDrop.getHeight(), scaledWidth, scaledHeight, -1, false, null);
             if (lowerRight!=null) {
             	int scaledFontSize = Math.max(12, scaleValue(12));
             	if (font.font.getSize() != scaledFontSize) {

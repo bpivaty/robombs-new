@@ -46,7 +46,7 @@ public class TextBlitter {
     	if (line == null || line.isEmpty()) {
     		return;
     	}
-		font.blitString(buffer, line, x, y + baselineOffset(font), -1f, col != null ? col : Color.WHITE);
+		font.blitString(buffer, line, x, y + baselineOffset(font), -1, col != null ? col : Color.WHITE);
     }
 
     private static String fitToWidth(GLFont font, String line, int maxWidth) {
