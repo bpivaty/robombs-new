@@ -32,7 +32,7 @@ public class IconPainter {
 		if (value!=max) {
 			col=java.awt.Color.RED;
 		}
-		fb.blit(box, 1, 0, fb.getOutputWidth()-5-62, fb.getOutputHeight()-5-14, 14, 16, (int)(60f*(float)value/(float)max), 12, 12, false, col); 
+		fb.blit(box, 1, 0, fb.getOutputWidth()-5-62, fb.getOutputHeight()-5-14, 14, 16, (int)(60f*(float)value/(float)max), 12, 12f, false, col); 
 	}
 	
 	private void paint(int startX, int y,  int cnt, FrameBuffer fb) {
