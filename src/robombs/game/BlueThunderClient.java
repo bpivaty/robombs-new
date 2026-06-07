@@ -116,6 +116,9 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	private SkyBox skyBox = null;
 
 	private ReflectionHelper refHelper = null;
+	private static final int SINGLE_PLAYER_BOT_COUNT = 3;
+	private boolean singlePlayerMode = false;
+	private boolean singlePlayerTestCloakPending = false;
 
 	/**
 	 * Create a new client. This starts the client and enters the game loop.
@@ -239,6 +242,9 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			waitTimer.reset();
 			NetLogger.log("Level prepared in " + (Ticker.getTime() - start) + "ms.");
 			levelNameTime = Ticker.getTime();
+			if (singlePlayerMode) {
+				singlePlayerTestCloakPending = true;
+			}
 
 		} catch (Exception e) {
 			throw new RuntimeException("Error while preparing level", e);
@@ -266,6 +272,8 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 		synchronized (SYNC) {
 			state.reset();
 			spawned = false;
+			singlePlayerMode = false;
+			singlePlayerTestCloakPending = false;
 			ready(false);
 			shouldBeConnected = false;
 			if (coMan != null) {
@@ -449,6 +457,8 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	 * plus 3 bots.
 	 */
 	public void startSinglePlayer() {
+		singlePlayerMode = true;
+		singlePlayerTestCloakPending = true;
 		firstMap();
 		selectedMaps.clear();
 		if (serverImpl != null) {
@@ -485,7 +495,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 		if (botClient != null) {
 			botClient.quit();
 		}
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < SINGLE_PLAYER_BOT_COUNT; i++) {
 			addBot();
 		}
 		serverImpl.setGameState(true);
@@ -1210,6 +1220,9 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 						} else {
 							serverSel.clientIsPlaying();
 						}
+						if (singlePlayerMode && singlePlayerTestCloakPending) {
+							spawnSinglePlayerTestCloak(respawn);
+						}
 						spawned = true;
 						Event ev = new Event(Event.PLAYER_RESPAWNED, player, player);
 						ev.setOrigin(respawn);
@@ -1222,6 +1235,34 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 					respawnRunning = false;
 				});
 			}
+	}
+
+	private void spawnSinglePlayerTestCloak(SimpleVector respawn) {
+		GridPosition spawnGrid = level.getMask().getGrid(respawn.x, respawn.z);
+		GridPosition target = findAdjacentFreeGrid(spawnGrid);
+		singlePlayerTestCloakPending = false;
+		if (target == null) {
+			NetLogger.log("Client: Unable to place single-player test cloak item near spawn!");
+			return;
+		}
+		SimpleVector pos = target.convertTo3D();
+		pos.y = -10f;
+		level.getMask().setMaskAt(target, MapMask.CLOAK_ITEM);
+		level.getItemManager().addItem(pos, new LocalObject().getObjectID(), Types.CLOAK_ITEM, shadower, eventQueue);
+		NetLogger.log("Client: Placed single-player test cloak item at " + target + "!");
+	}
+
+	private GridPosition findAdjacentFreeGrid(GridPosition center) {
+		int[][] offsets = new int[][] { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
+		MapMask mask = level.getMask();
+		for (int[] offset : offsets) {
+			int x = center.getX() + offset[0];
+			int z = center.getZ() + offset[1];
+			if (!mask.isObstacle(x, z) && !mask.isBlocked(x, z)) {
+				return new GridPosition(x, z);
+			}
+		}
+		return null;
 	}
 
 	/**
