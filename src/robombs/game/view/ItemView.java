@@ -78,6 +78,7 @@ public class ItemView extends ClientObject {
 			case Types.FIREPOWER_ITEM: s=0;e=23;break; 
 			case Types.KICK_ITEM: s=69f;e=92;break; 
 			case Types.DISEASE_ITEM: s=93;e=115;break; 
+			case Types.CLOAK_ITEM: s=46;e=68;break;
 		}
 		
 		TextureInfo ti=new TextureInfo(tid, s/w,0,e/w,0,s/w,1);
@@ -114,6 +115,11 @@ public class ItemView extends ClientObject {
 			}
 			if (type==Types.DISEASE_ITEM) {
 				event = new Event(Event.DISEASE_ITEM_COLLECTED, source.getObjectID(), obj.getObjectID(), -99);
+				event.setSourceClientID(source.getClientID());
+				event.setOrigin(getTranslation());
+			}
+			if (type==Types.CLOAK_ITEM) {
+				event = new Event(Event.CLOAK_ITEM_COLLECTED, source.getObjectID(), obj.getObjectID(), -99);
 				event.setSourceClientID(source.getClientID());
 				event.setOrigin(getTranslation());
 			}

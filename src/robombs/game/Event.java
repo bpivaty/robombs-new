@@ -35,6 +35,7 @@ public class Event {
     public final static int DISEASE_ITEM_COLLECTED=24;
     public final static int TAUNT=25;
     public final static int TEAM_SET=26;
+    public final static int CLOAK_ITEM_COLLECTED=27;
     
     public final static int PLAYER_READY=1000;
     public final static int PLAYER_NOT_READY=1001;

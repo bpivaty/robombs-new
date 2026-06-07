@@ -94,7 +94,9 @@ class EnemyView extends AnimatedObject {
 
 	public void processSpecial(Object obj) {
 		LocalPlayerObject lob = (LocalPlayerObject) obj;
-		if (lob.shouldbeTransparent()) {
+		if (lob.isCloaked()) {
+			setTransparency(25);
+		} else if (lob.shouldbeTransparent()) {
 			setTransparency(11);
 		} else {
 			setTransparency(-1);
@@ -103,11 +105,16 @@ class EnemyView extends AnimatedObject {
 
 	public void setToLocalObject(LocalObject lo) {
 		super.setToLocalObject(lo);
-		if (lo.isInvincible() && !shield.getVisibility()) {
+		if (lo.isCloaked()) {
+			shield.setVisibility(false);
+			setTransparency(25);
+		} else if (lo.isInvincible() && !shield.getVisibility()) {
 			shield.setVisibility(true);
+			setTransparency(-1);
 		} else {
 			if (!lo.isInvincible()) {
 				shield.setVisibility(false);
+				setTransparency(-1);
 			}
 		}
 	}
@@ -123,8 +130,8 @@ class EnemyView extends AnimatedObject {
 	}
 
 	public void hitByExplosion(CollisionParticipant source, LocalObject obj, DecalManager decal, CollisionEvent ce) {
-		if (shield.getVisibility()) {
-			// If the shield is visible, we are invincible...
+		if (shield.getVisibility() || obj.isCloaked()) {
+			// If the shield is visible or the player is cloaked, we are invincible...
 			return;
 		}
 		Event event = new Event(Event.EXPLOSION_HIT, -99, obj.getObjectID(), obj.getClientID());

@@ -58,6 +58,8 @@ public class ServerEventManager {
 			return processKickItem(event, servMan, server);
 		case Event.DISEASE_ITEM_COLLECTED:
 			return processDiseaseItem(event, servMan, server);
+		case Event.CLOAK_ITEM_COLLECTED:
+			return processCloakItem(event, servMan, server);
 		case Event.ENTITY_REMOVE:
 			return processEntityRemoval(event, servMan, ci, server);
 		case Event.FIRE:
@@ -461,6 +463,10 @@ public class ServerEventManager {
 	}
 
 	private DataContainer[] processDiseaseItem(Event event, ServerObjectManager servMan, BlueThunderServer server) {
+		return processItem(event, servMan, server);
+	}
+
+	private DataContainer[] processCloakItem(Event event, ServerObjectManager servMan, BlueThunderServer server) {
 		return processItem(event, servMan, server);
 	}
 
