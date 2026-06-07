@@ -108,7 +108,7 @@ class EnemyView extends AnimatedObject {
 	public void setToLocalObject(LocalObject lo) {
 		super.setToLocalObject(lo);
 		if (lo.isCloaked()) {
-			// Completely hide the player so other human players cannot see them;
+			// Completely hide the player so other human players cannot see them.
 			// processSpecial (called only for the local player view) will restore
 			// visibility with a semi-transparent effect so the player sees themselves.
 			shield.setVisibility(false);
