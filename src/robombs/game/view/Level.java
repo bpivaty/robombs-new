@@ -404,8 +404,8 @@ public class Level {
 			return true;
 		}
 		if (field==MapMask.THIEF_ITEM) {
-			itemMan.addItem(position, lob.getObjectID(), Types.THIEF_ITEM, sh,eventQueue);
-			return true;
+			mask.setMaskAt(pos, MapMask.FLOOR);
+			return false;
 		}
 		return false;
 	}

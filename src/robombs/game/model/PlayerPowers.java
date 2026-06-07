@@ -27,6 +27,7 @@ public class PlayerPowers {
 	private long lastCloakEndTime=0;
 	private boolean hasThiefItem=false;
 	private boolean thiefItemUsed=false;
+	private long bombLockEndsAt=0;
 	
 	public int getBombCount() {
 		if (isSick()!=ONE_BOMB_ONLY) {
@@ -156,6 +157,23 @@ public class PlayerPowers {
 		if (canUseThiefItem()) {
 			thiefItemUsed=true;
 		}
+	}
+	
+	public void lockBombUsage(long duration) {
+		long now=Ticker.getTime();
+		bombLockEndsAt=Math.max(bombLockEndsAt, now+duration);
+	}
+	
+	public boolean canPlaceBomb() {
+		return Ticker.getTime()>=bombLockEndsAt;
+	}
+	
+	public long getBombLockRemaining() {
+		long remaining=bombLockEndsAt-Ticker.getTime();
+		if (remaining<0) {
+			return 0;
+		}
+		return remaining;
 	}
 	
 	public void removeBombArtifact() {

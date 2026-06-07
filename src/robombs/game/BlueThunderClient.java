@@ -118,6 +118,14 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	private ReflectionHelper refHelper = null;
 	private static final int SINGLE_PLAYER_BOT_COUNT = 3;
 	private static final float LEVEL_ENTITY_Y = -10f;
+	private static final int THIEF_ITEM_BASE_ID = -50000;
+	private static final int CLOAK_ITEM_BASE_ID = -60000;
+	private static final int THIEF_SALT_SOURCE_MUL = 31;
+	private static final int THIEF_SALT_CLIENT_MUL = 17;
+	private static final int THIEF_SALT_TRIGGER_MUL = 13;
+	private static final int THIEF_ID_X_MUL = 251;
+	private static final int THIEF_ID_Z_MUL = 97;
+	private static final int SPAWN_PROBE_STEP = 37;
 	private volatile boolean singlePlayerMode = false;
 
 	/**
@@ -235,6 +243,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 		// is not 100% correct
 		// behaviour IMHO, but it's hard to track...
 		Colorizer.getInstance().init();
+		setupRoundArtifacts();
 		player.activate();
 		respawn();
 		try {
@@ -749,7 +758,12 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			level.getCrateManager().explode(event, level);
 			break;
 		case Event.COLLECT_ITEM:
+			GridPosition itemPos = level.getMask().getGrid(event.getOrigin().x, event.getOrigin().z);
+			int collectedItemType = level.getMask().getMaskAt(itemPos);
 			boolean bonus = level.getItemManager().collect(event, level, event.getSourceClientID() == clientImpl.getClientID(), player);
+			if (collectedItemType == MapMask.THIEF_ITEM) {
+				spawnThiefArtifact(event.getSourceID(), event.getSourceClientID(), event.getTargetID(), itemPos);
+			}
 
 			String sound = "bounce";
 			String texture = "star";
@@ -772,6 +786,12 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 				vel.x = 0.5f * (float) (Math.random() - 0.5f);
 				vel.z = 0.5f * (float) (Math.random() - 0.5f);
 				pm.addParticle(event.getOrigin(), vel, 10f, 2000, texture, 2f + (float) Math.random(), true, false, false, Color.WHITE);
+			}
+			break;
+		case Event.THIEF_BOMB_LOCKED:
+			if (event.getTargetClientID() == clientImpl.getClientID()) {
+				player.getPlayerPowers().lockBombUsage(event.getValue());
+				NetLogger.log("Thief artifact disabled bomb placement for " + (event.getValue() / 1000) + " seconds!");
 			}
 			break;
 		case Event.LOGIN_REJECTED:
@@ -1139,8 +1159,12 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	}
 
 	private void placeBomb() {
+		PlayerPowers powers = player.getPlayerPowers();
+		if (!powers.canPlaceBomb()) {
+			return;
+		}
 		if (bombTicker.getTicks() > 0) {
-			if (bombMan.getCount() < player.getPlayerPowers().getBombCount()) {
+			if (bombMan.getCount() < powers.getBombCount()) {
 				// Only do this, if you are allowed to...
 				LocalObject bomb = bombMan.addBomb(clientImpl, player, world, eventQueue);
 				if (bomb != null) {
@@ -1843,6 +1867,75 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			Camera camera = world.getCamera();
 			player.alignCamera(camera, ticks);
 		}
+	}
+	
+	private void setupRoundArtifacts() {
+		int cloakCount = Math.max(1, playerCount);
+		for (int i = 0; i < cloakCount; i++) {
+			GridPosition gp = findSpawnPosition(Types.CLOAK_ITEM, i + 1);
+			if (gp == null) {
+				break;
+			}
+			spawnItemAt(gp, MapMask.CLOAK_ITEM, Types.CLOAK_ITEM, CLOAK_ITEM_BASE_ID - i);
+		}
+		spawnThiefArtifact(0, 0, getMapNumber(), null);
+	}
+	
+	private void spawnThiefArtifact(int sourceId, int sourceClientId, int triggerId, GridPosition forbiddenPosition) {
+		long salt = ((long) sourceId) * THIEF_SALT_SOURCE_MUL + ((long) sourceClientId) * THIEF_SALT_CLIENT_MUL + ((long) triggerId) * THIEF_SALT_TRIGGER_MUL + getMapNumber();
+		GridPosition gp = findSpawnPosition(Types.THIEF_ITEM, Long.hashCode(salt), forbiddenPosition);
+		if (gp == null) {
+			return;
+		}
+		int idSeed = (int) ((((long) gp.getX()) * THIEF_ID_X_MUL + ((long) gp.getZ()) * THIEF_ID_Z_MUL + triggerId) & Integer.MAX_VALUE) % 40000;
+		spawnItemAt(gp, MapMask.THIEF_ITEM, Types.THIEF_ITEM, THIEF_ITEM_BASE_ID - idSeed);
+	}
+	
+	private GridPosition findSpawnPosition(int itemType, int salt) {
+		return findSpawnPosition(itemType, salt, null);
+	}
+	
+	private GridPosition findSpawnPosition(int itemType, int salt, GridPosition forbiddenPosition) {
+		MapMask mask = level.getMask();
+		int width = mask.getWidth();
+		int height = mask.getHeight();
+		if (width <= 0 || height <= 0) {
+			return null;
+		}
+		int size = width * height;
+		int seed = Objects.hash(itemType, salt, getMapNumber(), playerCount) & Integer.MAX_VALUE;
+		for (int i = 0; i < size; i++) {
+			int index = (seed + i * SPAWN_PROBE_STEP) % size;
+			int x = index % width;
+			int y = index / width;
+			int tile = mask.getMaskAt(x, y);
+			if (tile == MapMask.FLOOR && !isSpawnTile(x, y, mask) && isAllowedItemSpawnPosition(forbiddenPosition, x, y)) {
+				return new GridPosition(x, y);
+			}
+		}
+		return null;
+	}
+	
+	private boolean isAllowedItemSpawnPosition(GridPosition forbiddenPosition, int x, int y) {
+		return forbiddenPosition == null || forbiddenPosition.getX() != x || forbiddenPosition.getZ() != y;
+	}
+	
+	private boolean isSpawnTile(int x, int y, MapMask mask) {
+		for (SimpleVector spawn : spawnPoints) {
+			GridPosition gp = mask.getGrid(spawn.x, spawn.z);
+			if (gp.getX() == x && gp.getZ() == y) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private void spawnItemAt(GridPosition gp, int mapMaskType, int objectType, int objectId) {
+		MapMask mask = level.getMask();
+		mask.setMaskAt(gp, mapMaskType);
+		SimpleVector position = gp.convertTo3D();
+		position.y = LEVEL_ENTITY_Y;
+		level.getItemManager().addItem(position, objectId, objectType, shadower, eventQueue);
 	}
 
 	private void reInit(boolean withBrowser) throws Exception {
