@@ -168,6 +168,10 @@ public class PlayerPowers {
 		return Ticker.getTime()>=bombLockEndsAt;
 	}
 	
+	/**
+	 * Returns if the player may currently use weapons (water shots and bombs).
+	 * The thief artifact lock blocks both actions via this shared check.
+	 */
 	public boolean canUseWeapons() {
 		return canPlaceBomb();
 	}
