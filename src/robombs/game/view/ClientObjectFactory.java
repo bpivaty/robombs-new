@@ -48,6 +48,9 @@ public class ClientObjectFactory {
 
             ItemView i5 = new ItemView(Color.GREEN, Types.CLOAK_ITEM);
             bluePrints.put(Integer.valueOf(Types.CLOAK_ITEM), i5);
+            
+            ItemView i6 = new ItemView(Color.BLACK, Types.THIEF_ITEM);
+            bluePrints.put(Integer.valueOf(Types.THIEF_ITEM), i6);
 
             if (Globals.compiledObjects) {
             	e.compile(true);
@@ -60,6 +63,7 @@ public class ClientObjectFactory {
             	i3.compile(Globals.allDynamic);
             	i4.compile(Globals.allDynamic);
             	i5.compile(Globals.allDynamic);
+            	i6.compile(Globals.allDynamic);
             }
             
         } catch (Exception e) {
@@ -118,6 +122,9 @@ public class ClientObjectFactory {
                 break;
             case (Types.CLOAK_ITEM):
                 obj = new ItemView((ClientObject) bluePrints.get(new Integer(type)), Color.GREEN, type);
+                break;
+            case (Types.THIEF_ITEM):
+                obj = new ItemView((ClientObject) bluePrints.get(new Integer(type)), Color.BLACK, type);
                 break;
             default:
                 throw new RuntimeException("Unknown type: " + type);

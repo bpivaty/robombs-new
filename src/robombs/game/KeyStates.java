@@ -37,6 +37,7 @@ public class KeyStates {
     public static boolean f2=false;
     public static boolean f3=false;
     public static boolean cloak=false;
+    public static boolean thief=false;
     
     /**
      * Polls the keys.
@@ -105,6 +106,11 @@ public class KeyStates {
         		case(KeyEvent.VK_E):
         			if (ks.getState()) {
         				cloak=true;
+        			}
+        			break;
+        		case(KeyEvent.VK_X):
+        			if (ks.getState()) {
+        				thief=true;
         			}
         			break;
         		case(KeyEvent.VK_PAGE_DOWN):

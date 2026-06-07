@@ -60,6 +60,10 @@ public class ServerEventManager {
 			return processDiseaseItem(event, servMan, server);
 		case Event.CLOAK_ITEM_COLLECTED:
 			return processCloakItem(event, servMan, server);
+		case Event.THIEF_ITEM_COLLECTED:
+			return processThiefItem(event, servMan, server);
+		case Event.THIEF_ACTIVATED:
+			return processThiefActivation(event, servMan, server);
 		case Event.ENTITY_REMOVE:
 			return processEntityRemoval(event, servMan, ci, server);
 		case Event.FIRE:
@@ -468,6 +472,32 @@ public class ServerEventManager {
 
 	private DataContainer[] processCloakItem(Event event, ServerObjectManager servMan, BlueThunderServer server) {
 		return processItem(event, servMan, server);
+	}
+	
+	private DataContainer[] processThiefItem(Event event, ServerObjectManager servMan, BlueThunderServer server) {
+		return processItem(event, servMan, server);
+	}
+	
+	private DataContainer[] processThiefActivation(Event event, ServerObjectManager servMan, BlueThunderServer server) {
+		List<PlayerInfo> players=server.getPlayers();
+		EventDataContainer edc=new EventDataContainer();
+		int stolen=0;
+		for (PlayerInfo pi:players) {
+			if (pi.getClientID()!=event.getSourceClientID() && !pi.isBot()) {
+				Event steal=new Event(Event.THIEF_STEAL_BOMB, event.getSourceID(), pi.getObjectID(), pi.getClientID());
+				steal.setSourceClientID(event.getSourceClientID());
+				edc.add(steal);
+				stolen++;
+			}
+		}
+		if (stolen>0) {
+			Event gain=new Event(Event.THIEF_STEAL_BOMB, event.getSourceID(), event.getSourceID(), event.getSourceClientID());
+			gain.setSourceClientID(event.getSourceClientID());
+			gain.setValue(stolen);
+			edc.add(gain);
+			server.broadcast(edc);
+		}
+		return null;
 	}
 
 	private synchronized DataContainer[] processItem(Event event, ServerObjectManager servMan, BlueThunderServer server) {

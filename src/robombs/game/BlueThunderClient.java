@@ -1,7 +1,6 @@
 package robombs.game;
 
 import java.awt.Color;
-import java.net.InetAddress;
 import java.util.*;
 import javax.swing.*;
 
@@ -118,10 +117,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	private ReflectionHelper refHelper = null;
 	private static final int SINGLE_PLAYER_BOT_COUNT = 3;
 	private static final float LEVEL_ENTITY_Y = -10f;
-	private static final int[][] ADJACENT_GRID_OFFSETS = new int[][] { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
 	private volatile boolean singlePlayerMode = false;
-	private volatile boolean singlePlayerTestCloakPending = false;
-	private int singlePlayerTestItemId = Integer.MAX_VALUE;
 
 	/**
 	 * Create a new client. This starts the client and enters the game loop.
@@ -245,9 +241,6 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			waitTimer.reset();
 			NetLogger.log("Level prepared in " + (Ticker.getTime() - start) + "ms.");
 			levelNameTime = Ticker.getTime();
-			if (isLocalIpEndingWith047()) {
-				singlePlayerTestCloakPending = true;
-			}
 
 		} catch (Exception e) {
 			throw new RuntimeException("Error while preparing level", e);
@@ -276,7 +269,6 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			state.reset();
 			spawned = false;
 			singlePlayerMode = false;
-			singlePlayerTestCloakPending = false;
 			ready(false);
 			shouldBeConnected = false;
 			if (coMan != null) {
@@ -885,6 +877,20 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			}
 			respawnCount++;
 			break;
+		case Event.THIEF_STEAL_BOMB:
+			if (event.getTargetClientID() == clientImpl.getClientID()) {
+				PlayerPowers powers = player.getPlayerPowers();
+				boolean selfGain = event.getSourceClientID() == clientImpl.getClientID() && event.getSourceID() == event.getTargetID();
+				if (selfGain) {
+					if (event.getValue() > 0) {
+						powers.addToBombCount(event.getValue());
+						NetLogger.log("Thief artifact stole " + event.getValue() + " bomb artifact(s)!");
+					}
+				} else {
+					powers.removeBombArtifact();
+				}
+			}
+			break;
 		}
 	}
 
@@ -1102,6 +1108,22 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 		}
 		player.setCloaked(powers.isCloaking());
 	}
+	
+	private void updateThief() {
+		if (player == null || clientImpl == null) {
+			return;
+		}
+		PlayerPowers powers = player.getPlayerPowers();
+		if (KeyStates.thief) {
+			KeyStates.thief = false;
+			if (!player.isDead() && powers.canUseThiefItem()) {
+				powers.consumeThiefItem();
+				Event event = new Event(Event.THIEF_ACTIVATED, player, player);
+				event.setSourceClientID(clientImpl.getClientID());
+				eventQueue.add(event);
+			}
+		}
+	}
 
 	private void fireBullet(long ticks) {
 		player.setAnimation(Animations.FIRE);
@@ -1225,9 +1247,6 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 						} else {
 							serverSel.clientIsPlaying();
 						}
-						if (singlePlayerTestCloakPending) {
-							spawnSinglePlayerTestCloak(respawn);
-						}
 						spawned = true;
 						Event ev = new Event(Event.PLAYER_RESPAWNED, player, player);
 						ev.setOrigin(respawn);
@@ -1240,42 +1259,6 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 					respawnRunning = false;
 				});
 			}
-	}
-
-	private void spawnSinglePlayerTestCloak(SimpleVector respawn) {
-		GridPosition spawnGrid = level.getMask().getGrid(respawn.x, respawn.z);
-		GridPosition target = findAdjacentFreeGridPosition(spawnGrid);
-		singlePlayerTestCloakPending = false;
-		if (target == null) {
-			NetLogger.log("Client: Unable to place single-player test cloak item near spawn!");
-			return;
-		}
-		SimpleVector pos = target.convertTo3D();
-		level.getMask().setMaskAt(target, MapMask.CLOAK_ITEM);
-		int itemId = singlePlayerTestItemId--;
-		level.getItemManager().addItem(pos, itemId, Types.CLOAK_ITEM, shadower, eventQueue);
-		NetLogger.log("Client: Placed single-player test cloak item at " + target + "!");
-	}
-
-	private GridPosition findAdjacentFreeGridPosition(GridPosition center) {
-		MapMask mask = level.getMask();
-		for (int[] offset : ADJACENT_GRID_OFFSETS) {
-			int x = center.getX() + offset[0];
-			int z = center.getZ() + offset[1];
-			if (!mask.isObstacle(x, z) && !mask.isBlocked(x, z)) {
-				return new GridPosition(x, z);
-			}
-		}
-		return null;
-	}
-
-	private boolean isLocalIpEndingWith047() {
-		try {
-			String localIP = InetAddress.getLocalHost().getHostAddress();
-			return localIP.endsWith("0.47");
-		} catch (Exception e) {
-			return false;
-		}
 	}
 
 	/**
@@ -1465,6 +1448,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 					synchronized (SYNC) {
 						updatePlayer(ticks);
 						updateCloak();
+						updateThief();
 						fire(ticks);
 						taunt();
 						updatePlayerView(ticks);
