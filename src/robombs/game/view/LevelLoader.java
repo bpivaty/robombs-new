@@ -19,6 +19,7 @@ public class LevelLoader {
 	private final static char KICK_ITEM = 'k';
 	private final static char DISEASE_ITEM = 'd';
 	private final static char FIREPOWER_ITEM = 'f';
+	private final static char CLOAK_ITEM = 'g';
 
 	private final static String WALL_TEXTURE = "wall";
 	private final static String WALL_TEXTURE_DARK = "wall_dark";
@@ -140,7 +141,7 @@ public class LevelLoader {
 			} else {
 				if (chr == '?') {
 					char c = level.charAt(i);
-					if (c == NOTHING || c==CRATE || c==BOMB_ITEM || c==FIREPOWER_ITEM || c==KICK_ITEM || c==DISEASE_ITEM) {
+					if (c == NOTHING || c==CRATE || c==BOMB_ITEM || c==FIREPOWER_ITEM || c==KICK_ITEM || c==DISEASE_ITEM || c==CLOAK_ITEM) {
 						// Alles andere....
 						cnt++;
 					}
@@ -388,7 +389,7 @@ public class LevelLoader {
 
 						if (c != OUTSIDE) {
 							int texID = 0;
-							if (c == NOTHING || c==CRATE || c==BOMB_ITEM || c==KICK_ITEM || c==FIREPOWER_ITEM || c==DISEASE_ITEM || (c>='1' && c<='9')) {
+							if (c == NOTHING || c==CRATE || c==BOMB_ITEM || c==KICK_ITEM || c==FIREPOWER_ITEM || c==DISEASE_ITEM || c==CLOAK_ITEM || (c>='1' && c<='9')) {
 								String floorTex = set+FLOOR_TEXTURE;
 								int f = (int) (Math.random()*100);
 								if (f<12) {
@@ -417,6 +418,9 @@ public class LevelLoader {
 								}
 								if (c==DISEASE_ITEM) {
 									mask.setMaskAt(p, i, MapMask.DISEASE_ITEM);
+								}
+								if (c==CLOAK_ITEM) {
+									mask.setMaskAt(p, i, MapMask.CLOAK_ITEM);
 								}
 								if (c==NOTHING) {
 									mask.setMaskAt(p, i, MapMask.FLOOR);

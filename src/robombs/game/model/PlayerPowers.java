@@ -21,6 +21,10 @@ public class PlayerPowers {
 	private boolean canKick=false;
 	private Ticker sickness=new Ticker(20000);
 	private int sick=NOT_SICK;
+	private boolean hasCloakItem=false;
+	private boolean cloakActive=false;
+	private long cloakStartTime=0;
+	private long lastCloakEndTime=0;
 	
 	public int getBombCount() {
 		if (isSick()!=ONE_BOMB_ONLY) {
@@ -100,6 +104,41 @@ public class PlayerPowers {
 		if (water<0) {
 			water=0;
 		}
+	}
+	
+	public void giveCloakItem() {
+		hasCloakItem=true;
+	}
+	
+	public boolean hasCloakItem() {
+		return hasCloakItem;
+	}
+	
+	public boolean canActivateCloak() {
+		if (cloakActive) {
+			return false;
+		}
+		if (lastCloakEndTime==0) {
+			return true;
+		}
+		return Ticker.hasPassed(lastCloakEndTime, Globals.cloakCooldown);
+	}
+	
+	public void activateCloak() {
+		if (hasCloakItem && canActivateCloak()) {
+			cloakActive=true;
+			cloakStartTime=Ticker.getTime();
+		}
+	}
+	
+	public boolean isCloaking() {
+		if (cloakActive) {
+			if (Ticker.hasPassed(cloakStartTime, Globals.cloakDuration)) {
+				cloakActive=false;
+				lastCloakEndTime=Ticker.getTime();
+			}
+		}
+		return cloakActive;
 	}
 	
 	public void refillWater() {

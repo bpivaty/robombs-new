@@ -36,6 +36,7 @@ public class KeyStates {
     public static boolean f1=false;
     public static boolean f2=false;
     public static boolean f3=false;
+    public static boolean cloak=false;
     
     /**
      * Polls the keys.
@@ -100,6 +101,11 @@ public class KeyStates {
         			break;
         		case(KeyEvent.VK_F3):
         			f3=ks.getState();
+        			break;
+        		case(KeyEvent.VK_E):
+        			if (ks.getState()) {
+        				cloak=true;
+        			}
         			break;
         		case(KeyEvent.VK_PAGE_DOWN):
 	                lookUp = ks.getState();

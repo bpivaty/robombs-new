@@ -87,6 +87,10 @@ public class ItemManager {
 				NetLogger.log("Player "+lob.getPlayerPowers().getSicknessDescription());
 				ret=false;
 			}
+			if (itemType==MapMask.CLOAK_ITEM) {
+				lob.getPlayerPowers().giveCloakItem();
+				NetLogger.log("Player has obtained the cloak!");
+			}
 		} else {
 			if (item!=null) {
 				// Not local? Just determine the item type (bonus/malus)

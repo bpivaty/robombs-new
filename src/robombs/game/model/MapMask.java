@@ -12,6 +12,7 @@ public class MapMask {
 	public final static int FIREPOWER_ITEM=70;
 	public final static int KICK_ITEM=80;
 	public final static int DISEASE_ITEM=90;
+	public final static int CLOAK_ITEM=100;
 	public final static int NO_BOMB=0;
 
 	public final static int TILE_SIZE = 12;
@@ -40,7 +41,7 @@ public class MapMask {
 	}
 	
 	public static boolean isItem(int val) {
-		return val==BOMB_ITEM || val==FIREPOWER_ITEM || val==KICK_ITEM || val==DISEASE_ITEM;
+		return val==BOMB_ITEM || val==FIREPOWER_ITEM || val==KICK_ITEM || val==DISEASE_ITEM || val==CLOAK_ITEM;
 	}
 	
 	public MapMask cloneMask() {

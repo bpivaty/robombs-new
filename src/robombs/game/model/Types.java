@@ -46,5 +46,10 @@ public interface Types {
      * Type: Item Disease
      */
     public final static int DISEASE_ITEM=11;
+
+    /**
+     * Type: Item Cloak
+     */
+    public final static int CLOAK_ITEM=12;
     
 }

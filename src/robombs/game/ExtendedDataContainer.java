@@ -142,6 +142,7 @@ public class ExtendedDataContainer extends DataContainer {
         add(lo.getValue());
         add(lo.getSpecialValue());
         add(lo.isInvincible());
+        add(lo.isCloaked());
     }
     
     public void add(long val) {
@@ -168,6 +169,7 @@ public class ExtendedDataContainer extends DataContainer {
         lo.setValue(getNextInt());
         lo.setSpecialValue(getNextLong());
         lo.setInvincible(getNextBoolean());
+        lo.setCloaked(getNextBoolean());
     }
 
     public long getNextLong() {
@@ -198,6 +200,7 @@ public class ExtendedDataContainer extends DataContainer {
         lo.setValue(getNextInt());
         lo.setSpecialValue(getNextLong());
         lo.setInvincible(getNextBoolean());
+        lo.setCloaked(getNextBoolean());
         return lo;
     }
 

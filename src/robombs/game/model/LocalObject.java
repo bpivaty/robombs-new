@@ -28,6 +28,7 @@ public class LocalObject {
     private long special=0;
     private long localTime=0;
     private boolean invincible=false;
+    private boolean cloaked=false;
     
     private boolean isDisabled=false; // Client only ATM
     
@@ -157,6 +158,7 @@ public class LocalObject {
         this.value=src.getValue();
         this.special=src.getSpecialValue();
         this.invincible=src.isInvincible();
+        this.cloaked=src.isCloaked();
     }
 
     /**
@@ -324,5 +326,13 @@ public class LocalObject {
     
     public boolean isInvincible() {
     	return invincible;
+    }
+    
+    public void setCloaked(boolean cloak) {
+    	cloaked=cloak;
+    }
+    
+    public boolean isCloaked() {
+    	return cloaked;
     }
 }
