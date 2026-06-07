@@ -79,7 +79,7 @@ public class ItemView extends ClientObject {
 			case Types.KICK_ITEM: s=69f;e=92;break; 
 			case Types.DISEASE_ITEM: s=93;e=115;break; 
 			case Types.CLOAK_ITEM: s=46;e=68;break;
-			case Types.THIEF_ITEM: s=93;e=115;break;
+			case Types.THIEF_ITEM: s=24;e=45;break;
 		}
 		
 		TextureInfo ti=new TextureInfo(tid, s/w,0,e/w,0,s/w,1);
