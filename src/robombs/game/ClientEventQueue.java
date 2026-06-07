@@ -51,6 +51,7 @@ public class ClientEventQueue {
     	        case Event.FIREPOWER_ITEM_COLLECTED:
     	        case Event.KICK_ITEM_COLLECTED:
     	        case Event.DISEASE_ITEM_COLLECTED:
+    	        case Event.CLOAK_ITEM_COLLECTED:
     	        	if (!collectedItems.contains(event.getTargetID())) {
 		    	    	eve = new Event(Event.COLLECT_ITEM, event.getSourceID(), event.getTargetID(), -99);
 		    	    	eve.setSourceClientID(event.getSourceClientID());
