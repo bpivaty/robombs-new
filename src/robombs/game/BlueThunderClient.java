@@ -1248,7 +1248,6 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			return;
 		}
 		SimpleVector pos = target.convertTo3D();
-		pos.y = LEVEL_ENTITY_Y;
 		level.getMask().setMaskAt(target, MapMask.CLOAK_ITEM);
 		int itemId = singlePlayerTestItemId--;
 		level.getItemManager().addItem(pos, itemId, Types.CLOAK_ITEM, shadower, eventQueue);
