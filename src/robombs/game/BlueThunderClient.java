@@ -119,8 +119,9 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	private static final int SINGLE_PLAYER_BOT_COUNT = 3;
 	private static final float LEVEL_ENTITY_Y = -10f;
 	private static final int[][] ADJACENT_GRID_OFFSETS = new int[][] { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
-	private boolean singlePlayerMode = false;
-	private boolean singlePlayerTestCloakPending = false;
+	private volatile boolean singlePlayerMode = false;
+	private volatile boolean singlePlayerTestCloakPending = false;
+	private int singlePlayerTestItemId = Integer.MAX_VALUE;
 
 	/**
 	 * Create a new client. This starts the client and enters the game loop.
@@ -1240,7 +1241,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 
 	private void spawnSinglePlayerTestCloak(SimpleVector respawn) {
 		GridPosition spawnGrid = level.getMask().getGrid(respawn.x, respawn.z);
-		GridPosition target = findAdjacentFreeGrid(spawnGrid);
+		GridPosition target = findAdjacentFreeGridPosition(spawnGrid);
 		singlePlayerTestCloakPending = false;
 		if (target == null) {
 			NetLogger.log("Client: Unable to place single-player test cloak item near spawn!");
@@ -1249,13 +1250,12 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 		SimpleVector pos = target.convertTo3D();
 		pos.y = LEVEL_ENTITY_Y;
 		level.getMask().setMaskAt(target, MapMask.CLOAK_ITEM);
-		// Use the existing LocalObject id generation to avoid id collisions.
-		int itemId = new LocalObject().getObjectID();
+		int itemId = singlePlayerTestItemId--;
 		level.getItemManager().addItem(pos, itemId, Types.CLOAK_ITEM, shadower, eventQueue);
 		NetLogger.log("Client: Placed single-player test cloak item at " + target + "!");
 	}
 
-	private GridPosition findAdjacentFreeGrid(GridPosition center) {
+	private GridPosition findAdjacentFreeGridPosition(GridPosition center) {
 		MapMask mask = level.getMask();
 		for (int[] offset : ADJACENT_GRID_OFFSETS) {
 			int x = center.getX() + offset[0];
