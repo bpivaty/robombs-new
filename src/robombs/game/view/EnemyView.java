@@ -94,11 +94,7 @@ class EnemyView extends AnimatedObject {
 
 	public void processSpecial(Object obj) {
 		LocalPlayerObject lob = (LocalPlayerObject) obj;
-		if (lob.isCloaked()) {
-			// The local player can see themselves while cloaked, but as semi-transparent
-			setVisibility(true);
-			setTransparency(25);
-		} else if (lob.shouldbeTransparent()) {
+		if (lob.shouldbeTransparent()) {
 			setTransparency(11);
 		} else {
 			setTransparency(-1);
@@ -107,22 +103,12 @@ class EnemyView extends AnimatedObject {
 
 	public void setToLocalObject(LocalObject lo) {
 		super.setToLocalObject(lo);
-		if (lo.isCloaked()) {
-			// Completely hide the player so other human players cannot see them.
-			// processSpecial (called only for the local player view) will restore
-			// visibility with a semi-transparent effect so the player sees themselves.
-			shield.setVisibility(false);
-			setVisibility(false);
-		} else if (lo.isInvincible() && !shield.getVisibility()) {
-			setVisibility(true);
+		setVisibility(true);
+		setTransparency(-1);
+		if (lo.isCloaked() || lo.isInvincible()) {
 			shield.setVisibility(true);
-			setTransparency(-1);
 		} else {
-			if (!lo.isInvincible()) {
-				setVisibility(true);
-				shield.setVisibility(false);
-				setTransparency(-1);
-			}
+			shield.setVisibility(false);
 		}
 	}
 
@@ -138,7 +124,7 @@ class EnemyView extends AnimatedObject {
 
 	public void hitByExplosion(CollisionParticipant source, LocalObject obj, DecalManager decal, CollisionEvent ce) {
 		if (shield.getVisibility() || obj.isCloaked()) {
-			// If the shield is visible or the player is cloaked, we are invincible...
+			// Shield is active, player is invulnerable
 			return;
 		}
 		Event event = new Event(Event.EXPLOSION_HIT, -99, obj.getObjectID(), obj.getClientID());
