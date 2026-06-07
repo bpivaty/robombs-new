@@ -39,6 +39,7 @@ public class Event {
     public final static int THIEF_ITEM_COLLECTED=28;
     public final static int THIEF_ACTIVATED=29;
     public final static int THIEF_STEAL_BOMB=30;
+    public final static int THIEF_BOMB_LOCKED=31;
     
     public final static int PLAYER_READY=1000;
     public final static int PLAYER_NOT_READY=1001;

@@ -38,6 +38,7 @@ public class Globals {
 
 	public static long cloakDuration = 120000;
 	public static long cloakCooldown = 60000;
+	public static long thiefBombLockTime = 20000;
 
 	public static float minZoom = 0.175f;
 	public static float maxZoom = 2.0f;

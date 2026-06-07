@@ -246,19 +246,27 @@ public class LocalPlayerObject extends LocalObject {
 	
 	            SimpleVector netSpeed=new SimpleVector();
 	            SimpleVector temp=new SimpleVector();
+	            int mouseDeltaX=0;
+	            int mouseDeltaY=0;
+	            boolean mouseMoveMode=false;
+	            if (mouse!=null) {
+	            	mouseDeltaX=mouse.getDeltaX();
+	            	mouseDeltaY=mouse.getDeltaY();
+	            	mouseMoveMode=mouse.buttonDown(2);
+	            }
 	            
-	            if (KeyStates.up && forcedStepsBack<=0) {
+	            if ((KeyStates.up || (mouseMoveMode && mouseDeltaY<-1)) && forcedStepsBack<=0) {
 	                changed = true;
 	                temp.set(getRotation().getZAxis());
 	            }
 	
-	            if (KeyStates.down || forcedStepsBack>0) {
+	            if (KeyStates.down || forcedStepsBack>0 || (mouseMoveMode && mouseDeltaY>1)) {
 	                changed = true;
 	                temp.set(getRotation().getZAxis());
 	                temp.scalarMul(-1);
 	            }
 	
-	            if (KeyStates.left) {
+	            if (KeyStates.left || (mouseMoveMode && mouseDeltaX<-1)) {
 	                changed = true;
 	                SimpleVector temp2=getRotation().getXAxis();
 	                temp2.scalarMul(-1);
@@ -266,7 +274,7 @@ public class LocalPlayerObject extends LocalObject {
 	                
 	            }
 	
-	            if (KeyStates.right) {
+	            if (KeyStates.right || (mouseMoveMode && mouseDeltaX>1)) {
 	                changed = true;
 	                SimpleVector temp2=getRotation().getXAxis();
 	                temp.add(temp2);
@@ -293,7 +301,7 @@ public class LocalPlayerObject extends LocalObject {
 	            
 	            Matrix rot = getRotation();
 	
-	            int dx = mouse.getDeltaX();
+	            int dx = mouseMoveMode ? 0 : mouseDeltaX;
 	
 	            float ts = 0;
 	            float angle=SoundManager.ANGLE_NOT_CHANGED;
@@ -315,7 +323,9 @@ public class LocalPlayerObject extends LocalObject {
 	            
 	            dummy.setBackRotationMatrix(rot); // Store it in the dummy...collision detection needs it
 	
-	            zoomFactor-=0.125f*(float) mouse.getWheel();
+	            if (mouse!=null) {
+	            	zoomFactor-=0.125f*(float) mouse.getWheel();
+	            }
 	            if (zoomFactor<Globals.minZoom) {
 	            	zoomFactor=Globals.minZoom;
 	            }

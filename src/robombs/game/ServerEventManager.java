@@ -487,6 +487,10 @@ public class ServerEventManager {
 				Event steal=new Event(Event.THIEF_STEAL_BOMB, event.getSourceID(), pi.getObjectID(), pi.getClientID());
 				steal.setSourceClientID(event.getSourceClientID());
 				edc.add(steal);
+				Event lockBombs=new Event(Event.THIEF_BOMB_LOCKED, event.getSourceID(), pi.getObjectID(), pi.getClientID());
+				lockBombs.setSourceClientID(event.getSourceClientID());
+				lockBombs.setValue((int) Globals.thiefBombLockTime);
+				edc.add(lockBombs);
 				stolen++;
 			}
 		}
@@ -495,6 +499,8 @@ public class ServerEventManager {
 			gain.setSourceClientID(event.getSourceClientID());
 			gain.setValue(stolen);
 			edc.add(gain);
+		}
+		if (edc.getCurrentSize()>0) {
 			server.broadcast(edc);
 		}
 		return null;
