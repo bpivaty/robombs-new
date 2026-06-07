@@ -117,6 +117,8 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 
 	private ReflectionHelper refHelper = null;
 	private static final int SINGLE_PLAYER_BOT_COUNT = 3;
+	private static final float LEVEL_ENTITY_Y = -10f;
+	private static final int[][] ADJACENT_GRID_OFFSETS = new int[][] { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
 	private boolean singlePlayerMode = false;
 	private boolean singlePlayerTestCloakPending = false;
 
@@ -1245,17 +1247,17 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			return;
 		}
 		SimpleVector pos = target.convertTo3D();
-		pos.y = -10f;
+		pos.y = LEVEL_ENTITY_Y;
 		level.getMask().setMaskAt(target, MapMask.CLOAK_ITEM);
+		// Use the existing LocalObject id generation to avoid id collisions.
 		int itemId = new LocalObject().getObjectID();
 		level.getItemManager().addItem(pos, itemId, Types.CLOAK_ITEM, shadower, eventQueue);
 		NetLogger.log("Client: Placed single-player test cloak item at " + target + "!");
 	}
 
 	private GridPosition findAdjacentFreeGrid(GridPosition center) {
-		int[][] offsets = new int[][] { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
 		MapMask mask = level.getMask();
-		for (int[] offset : offsets) {
+		for (int[] offset : ADJACENT_GRID_OFFSETS) {
 			int x = center.getX() + offset[0];
 			int z = center.getZ() + offset[1];
 			if (!mask.isObstacle(x, z) && !mask.isBlocked(x, z)) {
