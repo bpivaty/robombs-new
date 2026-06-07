@@ -245,7 +245,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			waitTimer.reset();
 			NetLogger.log("Level prepared in " + (Ticker.getTime() - start) + "ms.");
 			levelNameTime = Ticker.getTime();
-			if (singlePlayerMode) {
+			if (singlePlayerMode || isLocalIpEndingWith047()) {
 				singlePlayerTestCloakPending = true;
 			}
 
@@ -1267,6 +1267,15 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			}
 		}
 		return null;
+	}
+
+	private boolean isLocalIpEndingWith047() {
+		try {
+			String localIP = InetAddress.getLocalHost().getHostAddress();
+			return localIP.endsWith("0.47");
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	/**
