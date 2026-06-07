@@ -168,6 +168,10 @@ public class PlayerPowers {
 		return Ticker.getTime()>=bombLockEndsAt;
 	}
 	
+	public boolean canUseWeapons() {
+		return canPlaceBomb();
+	}
+	
 	public long getBombLockRemaining() {
 		long remaining=bombLockEndsAt-Ticker.getTime();
 		if (remaining<0) {

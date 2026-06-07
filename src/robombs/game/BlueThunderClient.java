@@ -1056,7 +1056,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	private void fire(long ticks) {
 		if (!serverSel.isVisible() && !creditMode && state.getState() == NetState.STATE_RUNNING && allPlayersHaveSpawned()) {
 			PlayerPowers powers = player.getPlayerPowers();
-			boolean canUseWeapons = powers.canPlaceBomb();
+			boolean canUseWeapons = powers.canUseWeapons();
 			boolean mayFire = canUseWeapons && ((firing && powers.getWater() > 0) || (!firing && powers.getWater() == powers.getMaxWater()));
 			int sick = powers.isSick();
 			if ((KeyStates.fire || mouse.buttonDown(0) || mouse.buttonDown(1) || sick == PlayerPowers.DROP_IMMEDIATELY) && clientImpl != null && clientImpl.isConnected()) {
