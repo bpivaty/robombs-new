@@ -52,4 +52,9 @@ public interface Types {
      */
     public final static int CLOAK_ITEM=12;
     
+    /**
+     * Type: Item Thief
+     */
+    public final static int THIEF_ITEM=13;
+    
 }

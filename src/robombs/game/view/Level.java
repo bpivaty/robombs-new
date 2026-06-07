@@ -403,6 +403,10 @@ public class Level {
 			itemMan.addItem(position, lob.getObjectID(), Types.CLOAK_ITEM, sh,eventQueue);
 			return true;
 		}
+		if (field==MapMask.THIEF_ITEM) {
+			itemMan.addItem(position, lob.getObjectID(), Types.THIEF_ITEM, sh,eventQueue);
+			return true;
+		}
 		return false;
 	}
 

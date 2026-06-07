@@ -25,6 +25,8 @@ public class PlayerPowers {
 	private boolean cloakActive=false;
 	private long cloakStartTime=0;
 	private long lastCloakEndTime=0;
+	private boolean hasThiefItem=false;
+	private boolean thiefItemUsed=false;
 	
 	public int getBombCount() {
 		if (isSick()!=ONE_BOMB_ONLY) {
@@ -139,6 +141,27 @@ public class PlayerPowers {
 			}
 		}
 		return cloakActive;
+	}
+	
+	public void giveThiefItem() {
+		hasThiefItem=true;
+		thiefItemUsed=false;
+	}
+	
+	public boolean canUseThiefItem() {
+		return hasThiefItem && !thiefItemUsed;
+	}
+	
+	public void consumeThiefItem() {
+		if (canUseThiefItem()) {
+			thiefItemUsed=true;
+		}
+	}
+	
+	public void removeBombArtifact() {
+		if (bombCount>1) {
+			bombCount--;
+		}
 	}
 	
 	public void refillWater() {
