@@ -245,7 +245,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			waitTimer.reset();
 			NetLogger.log("Level prepared in " + (Ticker.getTime() - start) + "ms.");
 			levelNameTime = Ticker.getTime();
-			if (singlePlayerMode || isLocalIpEndingWith047()) {
+			if (isLocalIpEndingWith047()) {
 				singlePlayerTestCloakPending = true;
 			}
 
@@ -1225,7 +1225,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 						} else {
 							serverSel.clientIsPlaying();
 						}
-						if (singlePlayerMode && singlePlayerTestCloakPending) {
+						if (singlePlayerTestCloakPending) {
 							spawnSinglePlayerTestCloak(respawn);
 						}
 						spawned = true;
