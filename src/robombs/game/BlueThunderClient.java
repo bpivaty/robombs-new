@@ -117,7 +117,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 
 	private ReflectionHelper refHelper = null;
 	private static final int SINGLE_PLAYER_BOT_COUNT = 3;
-	private static final float LEVEL_ENTITY_Y = -10f;
+	private static final float LEVEL_ENTITY_Y = -4.3f;
 	private static final int THIEF_ITEM_BASE_ID = -50000;
 	private static final int CLOAK_ITEM_BASE_ID = -60000;
 	private static final int THIEF_SALT_SOURCE_MUL = 31;

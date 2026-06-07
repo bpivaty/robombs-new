@@ -36,8 +36,8 @@ public class Globals {
 
 	public static long invincibleTime = 3000;
 
-	public static long cloakDuration = 120000;
-	public static long cloakCooldown = 60000;
+	public static long cloakDuration = 45000;
+	public static long cloakCooldown = 40000;
 	public static long thiefBombLockTime = 20000;
 
 	public static float minZoom = 0.175f;

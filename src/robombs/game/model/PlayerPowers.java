@@ -155,7 +155,8 @@ public class PlayerPowers {
 	
 	public void consumeThiefItem() {
 		if (canUseThiefItem()) {
-			thiefItemUsed=true;
+			hasThiefItem = false;
+			thiefItemUsed = true;
 		}
 	}
 	
