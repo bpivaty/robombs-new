@@ -14,6 +14,7 @@ import robombs.game.model.*;
 public class ClientObjectFactory {
 
 	private final static Color COLOR=new Color(20,20,20);
+	private final static Color THIEF_COLOR=new Color(139, 69, 19);
 
     private static ClientObjectFactory instance = null;
     private Map<Integer, Object3D> bluePrints = new HashMap<Integer, Object3D>();
@@ -49,7 +50,7 @@ public class ClientObjectFactory {
             ItemView i5 = new ItemView(Color.GREEN, Types.CLOAK_ITEM);
             bluePrints.put(Integer.valueOf(Types.CLOAK_ITEM), i5);
             
-            ItemView i6 = new ItemView(Color.BLACK, Types.THIEF_ITEM);
+            ItemView i6 = new ItemView(THIEF_COLOR, Types.THIEF_ITEM);
             bluePrints.put(Integer.valueOf(Types.THIEF_ITEM), i6);
 
             if (Globals.compiledObjects) {
@@ -124,7 +125,7 @@ public class ClientObjectFactory {
                 obj = new ItemView((ClientObject) bluePrints.get(new Integer(type)), Color.GREEN, type);
                 break;
             case (Types.THIEF_ITEM):
-                obj = new ItemView((ClientObject) bluePrints.get(new Integer(type)), Color.BLACK, type);
+                obj = new ItemView((ClientObject) bluePrints.get(new Integer(type)), THIEF_COLOR, type);
                 break;
             default:
                 throw new RuntimeException("Unknown type: " + type);
