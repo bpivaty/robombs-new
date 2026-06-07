@@ -1051,17 +1051,6 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			PlayerPowers powers = player.getPlayerPowers();
 			boolean mayFire = (firing && powers.getWater() > 0) || (!firing && powers.getWater() == powers.getMaxWater());
 			int sick = powers.isSick();
-
-			if (KeyStates.cloak) {
-				KeyStates.cloak = false;
-				if (!player.isDead() && powers.hasCloakItem() && powers.canActivateCloak()) {
-					powers.activateCloak();
-				}
-			}
-
-			// Update cloak state on player each frame
-			boolean cloaking = powers.isCloaking();
-			player.setCloaked(cloaking);
 			if ((KeyStates.fire || mouse.buttonDown(0) || mouse.buttonDown(1) || sick == PlayerPowers.DROP_IMMEDIATELY) && clientImpl != null && clientImpl.isConnected()) {
 				if (!player.isDead() && !hasToRelease) {
 
@@ -1098,6 +1087,20 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 				firing = false;
 			}
 		}
+	}
+
+	private void updateCloak() {
+		if (player == null) {
+			return;
+		}
+		PlayerPowers powers = player.getPlayerPowers();
+		if (KeyStates.cloak) {
+			KeyStates.cloak = false;
+			if (!player.isDead() && powers.hasCloakItem() && powers.canActivateCloak()) {
+				powers.activateCloak();
+			}
+		}
+		player.setCloaked(powers.isCloaking());
 	}
 
 	private void fireBullet(long ticks) {
@@ -1452,6 +1455,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 				if (state.getState() >= NetState.STATE_WAITING) {
 					synchronized (SYNC) {
 						updatePlayer(ticks);
+						updateCloak();
 						fire(ticks);
 						taunt();
 						updatePlayerView(ticks);
