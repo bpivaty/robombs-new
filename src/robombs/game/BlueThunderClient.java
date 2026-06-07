@@ -1,6 +1,7 @@
 package robombs.game;
 
 import java.awt.Color;
+import java.net.InetAddress;
 import java.util.*;
 import javax.swing.*;
 
@@ -187,26 +188,6 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 				eventQueue.clear();
 				selectedServer = server;
 				state.setState(NetState.STATE_CONNECTED);
-
-				// Decide if active transfers should be used (LAN) or not
-				// (Internet)
-				String serverIP = clientImpl.getServer();
-				System.out.println(serverIP);
-				if (serverIP.startsWith("127.0.0.1") || serverIP.startsWith("10.") || serverIP.startsWith("172.") || serverIP.startsWith("192.168.")) {
-					Globals.activeTransfer = true;
-					Globals.activeTransferForBots = true;
-					NetLogger.log("Client " + getClientID() + ": LAN transfer mode selected!");
-				} else {
-					Globals.activeTransfer = false;
-					Globals.activeTransferForBots = false;
-					NetLogger.log("Client " + getClientID() + ": Internet transfer mode selected!");
-				}
-				/*
-				 * Globals.activeTransfer=false;
-				 * Globals.activeTransferForBots=false;
-				 * NetLogger.log("Client "+getClientID
-				 * ()+": Internet transfer mode forced!");
-				 */
 
 			} catch (Exception e) {
 				if (clientImpl != null) {
