@@ -454,11 +454,10 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 
 	/**
 	 * Starts a single player game. That's a game with all maps in the rotation
-	 * plus 3 bots.
+	 * plus a configured number of bots.
 	 */
 	public void startSinglePlayer() {
 		singlePlayerMode = true;
-		singlePlayerTestCloakPending = true;
 		firstMap();
 		selectedMaps.clear();
 		if (serverImpl != null) {
@@ -1248,7 +1247,8 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 		SimpleVector pos = target.convertTo3D();
 		pos.y = -10f;
 		level.getMask().setMaskAt(target, MapMask.CLOAK_ITEM);
-		level.getItemManager().addItem(pos, new LocalObject().getObjectID(), Types.CLOAK_ITEM, shadower, eventQueue);
+		int itemId = new LocalObject().getObjectID();
+		level.getItemManager().addItem(pos, itemId, Types.CLOAK_ITEM, shadower, eventQueue);
 		NetLogger.log("Client: Placed single-player test cloak item at " + target + "!");
 	}
 
