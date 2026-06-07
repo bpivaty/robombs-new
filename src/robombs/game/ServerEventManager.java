@@ -500,6 +500,7 @@ public class ServerEventManager {
 			gain.setValue(stolen);
 			edc.add(gain);
 		}
+		// Broadcast even without stolen bombs, because THIEF_BOMB_LOCKED events still have to reach targets.
 		if (edc.getCurrentSize()>0) {
 			server.broadcast(edc);
 		}

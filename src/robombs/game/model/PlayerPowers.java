@@ -161,10 +161,7 @@ public class PlayerPowers {
 	
 	public void lockBombUsage(long duration) {
 		long now=Ticker.getTime();
-		if (bombLockEndsAt<now) {
-			bombLockEndsAt=now;
-		}
-		bombLockEndsAt+=duration;
+		bombLockEndsAt=Math.max(bombLockEndsAt, now+duration);
 	}
 	
 	public boolean canPlaceBomb() {

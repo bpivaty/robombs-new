@@ -120,6 +120,12 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	private static final float LEVEL_ENTITY_Y = -10f;
 	private static final int THIEF_ITEM_BASE_ID = -50000;
 	private static final int CLOAK_ITEM_BASE_ID = -60000;
+	private static final int THIEF_SALT_SOURCE_MUL = 31;
+	private static final int THIEF_SALT_CLIENT_MUL = 17;
+	private static final int THIEF_SALT_TRIGGER_MUL = 13;
+	private static final int THIEF_ID_X_MUL = 251;
+	private static final int THIEF_ID_Z_MUL = 97;
+	private static final int SPAWN_PROBE_STEP = 37;
 	private volatile boolean singlePlayerMode = false;
 
 	/**
@@ -1876,11 +1882,13 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 	}
 	
 	private void spawnThiefArtifact(int sourceId, int sourceClientId, int triggerId, GridPosition forbiddenPosition) {
-		GridPosition gp = findSpawnPosition(Types.THIEF_ITEM, sourceId * 31 + sourceClientId * 17 + triggerId * 13 + getMapNumber(), forbiddenPosition);
+		long salt = ((long) sourceId) * THIEF_SALT_SOURCE_MUL + ((long) sourceClientId) * THIEF_SALT_CLIENT_MUL + ((long) triggerId) * THIEF_SALT_TRIGGER_MUL + getMapNumber();
+		GridPosition gp = findSpawnPosition(Types.THIEF_ITEM, Long.hashCode(salt), forbiddenPosition);
 		if (gp == null) {
 			return;
 		}
-		spawnItemAt(gp, MapMask.THIEF_ITEM, Types.THIEF_ITEM, THIEF_ITEM_BASE_ID - Math.abs(gp.getX() * 251 + gp.getZ() * 97 + triggerId));
+		int idSeed = (int) ((((long) gp.getX()) * THIEF_ID_X_MUL + ((long) gp.getZ()) * THIEF_ID_Z_MUL + triggerId) & Integer.MAX_VALUE) % 40000;
+		spawnItemAt(gp, MapMask.THIEF_ITEM, Types.THIEF_ITEM, THIEF_ITEM_BASE_ID - idSeed);
 	}
 	
 	private GridPosition findSpawnPosition(int itemType, int salt) {
@@ -1895,17 +1903,21 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			return null;
 		}
 		int size = width * height;
-		int seed = Math.abs(Objects.hash(itemType, salt, getMapNumber(), playerCount));
+		int seed = Objects.hash(itemType, salt, getMapNumber(), playerCount) & Integer.MAX_VALUE;
 		for (int i = 0; i < size; i++) {
-			int index = (seed + i * 37) % size;
+			int index = (seed + i * SPAWN_PROBE_STEP) % size;
 			int x = index % width;
 			int y = index / width;
 			int tile = mask.getMaskAt(x, y);
-			if (tile == MapMask.FLOOR && !isSpawnTile(x, y, mask) && (forbiddenPosition == null || forbiddenPosition.getX() != x || forbiddenPosition.getZ() != y)) {
+			if (tile == MapMask.FLOOR && !isSpawnTile(x, y, mask) && isAllowedItemSpawnPosition(forbiddenPosition, x, y)) {
 				return new GridPosition(x, y);
 			}
 		}
 		return null;
+	}
+	
+	private boolean isAllowedItemSpawnPosition(GridPosition forbiddenPosition, int x, int y) {
+		return forbiddenPosition == null || forbiddenPosition.getX() != x || forbiddenPosition.getZ() != y;
 	}
 	
 	private boolean isSpawnTile(int x, int y, MapMask mask) {

@@ -11,6 +11,8 @@ import robombs.game.sound.*;
  */
 public class LocalPlayerObject extends LocalObject {
 
+	private static final int MOUSE_MOVE_THRESHOLD = 1;
+
     private Matrix viewRot = new Matrix();
     private SimpleVector ellipsoid = new SimpleVector(3.5f, 5, 3.5f);
     private float turnSpeed = 0;
@@ -255,18 +257,18 @@ public class LocalPlayerObject extends LocalObject {
 	            	mouseMoveMode=mouse.buttonDown(2);
 	            }
 	            
-	            if ((KeyStates.up || (mouseMoveMode && mouseDeltaY<-1)) && forcedStepsBack<=0) {
+	            if ((KeyStates.up || (mouseMoveMode && mouseDeltaY<-MOUSE_MOVE_THRESHOLD)) && forcedStepsBack<=0) {
 	                changed = true;
 	                temp.set(getRotation().getZAxis());
 	            }
 	
-	            if (KeyStates.down || forcedStepsBack>0 || (mouseMoveMode && mouseDeltaY>1)) {
+	            if (KeyStates.down || forcedStepsBack>0 || (mouseMoveMode && mouseDeltaY>MOUSE_MOVE_THRESHOLD)) {
 	                changed = true;
 	                temp.set(getRotation().getZAxis());
 	                temp.scalarMul(-1);
 	            }
 	
-	            if (KeyStates.left || (mouseMoveMode && mouseDeltaX<-1)) {
+	            if (KeyStates.left || (mouseMoveMode && mouseDeltaX<-MOUSE_MOVE_THRESHOLD)) {
 	                changed = true;
 	                SimpleVector temp2=getRotation().getXAxis();
 	                temp2.scalarMul(-1);
@@ -274,7 +276,7 @@ public class LocalPlayerObject extends LocalObject {
 	                
 	            }
 	
-	            if (KeyStates.right || (mouseMoveMode && mouseDeltaX>1)) {
+	            if (KeyStates.right || (mouseMoveMode && mouseDeltaX>MOUSE_MOVE_THRESHOLD)) {
 	                changed = true;
 	                SimpleVector temp2=getRotation().getXAxis();
 	                temp.add(temp2);
