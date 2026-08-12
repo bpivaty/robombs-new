@@ -63,6 +63,7 @@ public abstract class AbstractClient {
 	protected volatile boolean modified = false;
 
 	protected int playerCount = 0;
+	protected int humanPlayerCount = 0;
 	protected int respawnCount = 0;
 
 	protected WaterDropper dropper = new WaterDropper();

@@ -236,6 +236,7 @@ public class BotClient extends AbstractClient implements DataTransferListener,	C
 			NetLogger.log("Client " + clientImpl.getClientID()
 					+ ": All clients are ready to go!");
 			playerCount=Integer.parseInt(il.getValue());
+			humanPlayerCount=il.getCount()>0 ? il.getCount() : playerCount;
 			respawnCount=0;
 			begin();
 		}

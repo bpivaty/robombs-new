@@ -541,6 +541,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			NetLogger.log("Client " + clientImpl.getClientID() + ": All clients are ready to go!");
 			messages.insertCell(2, 0, "Starting game!");
 			playerCount = Integer.parseInt(il.getValue());
+			humanPlayerCount = il.getCount() > 0 ? il.getCount() : playerCount;
 			respawnCount = 0;
 			begin();
 		}
@@ -1118,13 +1119,29 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 		PlayerPowers powers = player.getPlayerPowers();
 		if (KeyStates.thief) {
 			KeyStates.thief = false;
-			if (!player.isDead() && powers.canUseThiefItem()) {
+			if (!player.isDead() && powers.canUseThiefItem() && hasThiefTargetInRange()) {
 				powers.consumeThiefItem();
 				Event event = new Event(Event.THIEF_ACTIVATED, player, player);
 				event.setSourceClientID(clientImpl.getClientID());
 				eventQueue.add(event);
 			}
 		}
+	}
+	
+	private boolean hasThiefTargetInRange() {
+		if (coMan == null || playerView == null) {
+			return false;
+		}
+		SimpleVector myPos = player.getPosition();
+		if (myPos == null) {
+			return false;
+		}
+		for (SimpleVector pos : coMan.getPlayerPositions(true, playerView)) {
+			if (pos != null && pos.calcSub(myPos).length() <= Globals.thiefActivationDistance) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void fireBullet(long ticks) {
@@ -1879,7 +1896,10 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 			}
 			spawnItemAt(gp, MapMask.CLOAK_ITEM, Types.CLOAK_ITEM, CLOAK_ITEM_BASE_ID - i);
 		}
-		spawnThiefArtifact(0, 0, getMapNumber(), null);
+		int thiefCount = Math.max(1, humanPlayerCount);
+		for (int i = 0; i < thiefCount; i++) {
+			spawnThiefArtifact(0, 0, getMapNumber() + i, null);
+		}
 	}
 	
 	private void spawnThiefArtifact(int sourceId, int sourceClientId, int triggerId, GridPosition forbiddenPosition) {
