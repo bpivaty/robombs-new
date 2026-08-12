@@ -255,7 +255,7 @@ public class ServerEventManager {
 			// All done? Then start the game...
 			NetLogger.log("Server: All " + server.getClientCount() + " clients are ready to go!");
 			InfoDataContainer dc = new InfoDataContainer();
-			InfoLine il = new InfoLine(InfoLine.ALL_CLIENTS_READY, 0, "playerCount", Integer.toString(server.getPlayers().size()));
+			InfoLine il = new InfoLine(InfoLine.ALL_CLIENTS_READY, getHumanPlayerCount(server), "playerCount", Integer.toString(server.getPlayers().size()));
 			dc.add(il);
 			server.broadcast(dc);
 			server.setTimeOut(NetGlobals.serverTimeOut);
@@ -480,10 +480,15 @@ public class ServerEventManager {
 	
 	private DataContainer[] processThiefActivation(Event event, ServerObjectManager servMan, BlueThunderServer server) {
 		List<PlayerInfo> players=server.getPlayers();
+		LocalObject source=servMan.getLocalObjectToIDs(event.getSourceID(), event.getSourceClientID());
 		EventDataContainer edc=new EventDataContainer();
 		int stolen=0;
 		for (PlayerInfo pi:players) {
-			if (pi.getClientID()!=event.getSourceClientID() && !pi.isBot()) {
+			if (pi.getClientID()!=event.getSourceClientID() && !pi.isBot() && !pi.isDead()) {
+				LocalObject target=servMan.getLocalObjectToIDs(pi.getObjectID(), pi.getClientID());
+				if (!isInThiefRange(source, target)) {
+					continue;
+				}
 				Event steal=new Event(Event.THIEF_STEAL_BOMB, event.getSourceID(), pi.getObjectID(), pi.getClientID());
 				steal.setSourceClientID(event.getSourceClientID());
 				edc.add(steal);
@@ -505,6 +510,29 @@ public class ServerEventManager {
 			server.broadcast(edc);
 		}
 		return null;
+	}
+	
+	private int getHumanPlayerCount(BlueThunderServer server) {
+		int humans=0;
+		List<PlayerInfo> players=server.getPlayers();
+		for (PlayerInfo pi:players) {
+			if (!pi.isBot()) {
+				humans++;
+			}
+		}
+		return Math.max(1, humans);
+	}
+	
+	private boolean isInThiefRange(LocalObject source, LocalObject target) {
+		if (source==null || target==null) {
+			return false;
+		}
+		SimpleVector sourcePos=source.getPosition();
+		SimpleVector targetPos=target.getPosition();
+		if (sourcePos==null || targetPos==null) {
+			return false;
+		}
+		return sourcePos.calcSub(targetPos).length()<=Globals.thiefActivationDistance;
 	}
 
 	private synchronized DataContainer[] processItem(Event event, ServerObjectManager servMan, BlueThunderServer server) {
