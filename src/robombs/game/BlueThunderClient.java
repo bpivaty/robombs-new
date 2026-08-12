@@ -1898,7 +1898,7 @@ public class BlueThunderClient extends AbstractClient implements DataTransferLis
 		}
 		int thiefCount = Math.max(1, humanPlayerCount);
 		for (int i = 0; i < thiefCount; i++) {
-			spawnThiefArtifact(0, 0, getMapNumber() + i, null);
+			spawnThiefArtifact(0, 0, i + 1, null);
 		}
 	}
 	
